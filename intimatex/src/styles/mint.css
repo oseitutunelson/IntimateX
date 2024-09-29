@@ -1,0 +1,46 @@
+.mint{
+    margin: 3rem 1rem;
+}
+.mint form{
+    display: block;
+}
+
+input[type="file"] {
+    display: none;
+  }
+  
+.file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+.file-upload:hover {
+    background-color: blueviolet;
+    color: white;
+    border: none;
+}
+
+input[type="text"]{
+    margin: 1rem 0;
+    padding: 0.5rem;
+}
+
+.form_button{
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    background-color: blueviolet;
+    border-radius: 20px;
+}
+
+.content{
+    margin: 1rem;
+}
+.content img{
+    width: 300px;
+    height: 200px;
+    border: 2px solid #000;
+    margin: 1.5rem 0;
+}

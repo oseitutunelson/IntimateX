@@ -1,0 +1,23 @@
+.App{
+  color: #000;
+}
+.navigation{
+  display: flex;
+  margin: 1rem ;
+}
+.navigation button{
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border: none;
+  margin-left: auto;
+  background-color: blueviolet;
+  border-radius: 1.5rem;
+}
+.navigation p{
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border: none;
+  margin-left: auto;
+  background-color: blueviolet;
+  border-radius: 1.5rem;
+}
