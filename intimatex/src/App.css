@@ -5,6 +5,9 @@
   display: flex;
   margin: 1rem ;
 }
+.navigation h3{
+  cursor: pointer;
+}
 .navigation button{
   padding: 0.5rem 1rem;
   cursor: pointer;
@@ -20,4 +23,8 @@
   margin-left: auto;
   background-color: blueviolet;
   border-radius: 1.5rem;
+}
+.app_link{
+  text-decoration: none;
+  color: blueviolet;
 }

@@ -4,7 +4,7 @@ import {ethers} from 'ethers';
 import truncateEthAddress from 'truncate-eth-address';
 import { MintNft } from './components/mintNft';
 import { UserNfts } from './components/nftsPage';
-
+import { Link } from "react-router-dom";
 
 export default function App(){
   const [wallet , setWallet] = useState("");
@@ -33,7 +33,7 @@ export default function App(){
   return(
     <div className='App'>
       <div className='navigation'>
-        <h3>intimateX</h3>
+       <Link href='/' className='app_link'><h3>intimateX</h3></Link>
       {
         wallet ?  <p>wallet: {`${truncateEthAddress(wallet)}`}</p> : <button onClick={connect}>connect wallet</button>
       }  

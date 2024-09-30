@@ -11,9 +11,22 @@ export const MintNft = () => {
   const [tokenId, setTokenId] = useState(1);
   const [userNftArrayHash, setUserNftArrayHash] = useState(localStorage.getItem('savedNftHash')); // Get user's NFT array hash from localStorage
   const [userAddress, setUserAddress] = useState(null); // User's Ethereum address
+  const [globalFeedHash, setGlobalFeedHash] = useState(null); // Global NFT feed IPFS hash
 
   const { REACT_APP_PINATA_API_KEY, REACT_APP_PINATA_API_SECRET } = process.env;
 
+   // Fetch the global NFT feed from IPFS
+   const fetchGlobalFeedFromIPFS = async () => {
+    if (!globalFeedHash) return []; // If no IPFS hash yet, return empty array
+
+    try {
+      const response = await axios.get(`https://gateway.pinata.cloud/ipfs/${globalFeedHash}`);
+      return response.data; // Return global NFT array
+    } catch (error) {
+      console.error("Error fetching global feed:", error);
+      return [];
+    }
+  };
   // Fetch the user's existing NFT array from IPFS
   const fetchUserNftArrayFromIPFS = async () => {
     if (!userNftArrayHash) return []; // If no hash is stored, return empty array
@@ -26,6 +39,38 @@ export const MintNft = () => {
       return [];
     }
   };
+  
+   // Update global NFT feed on IPFS
+   const updateGlobalFeedOnIPFS = async (newNftData) => {
+    try {
+      // Fetch the global feed
+      const globalNftFeed = await fetchGlobalFeedFromIPFS();
+
+      // Add the new NFT data to the feed
+      globalNftFeed.push(newNftData);
+
+      // Upload the updated feed to IPFS
+      const res = await axios({
+        method: "post",
+        url: "https://api.pinata.cloud/pinning/pinJsonToIPFS",
+        data: globalNftFeed,
+        headers: {
+          'pinata_api_key': `${REACT_APP_PINATA_API_KEY}`,
+          'pinata_secret_api_key': `${REACT_APP_PINATA_API_SECRET}`,
+        },
+      });
+ // Return the new IPFS hash for the updated feed
+ const newGlobalFeedHash = res.data.IpfsHash;
+ setGlobalFeedHash(newGlobalFeedHash); // Update state with the new hash
+
+ // Optionally store in localStorage for persistence between refreshes
+ localStorage.setItem('globalFeedHash', newGlobalFeedHash);
+ return newGlobalFeedHash;
+} catch (error) {
+ console.error("Error updating global feed:", error);
+}
+};
+
 
   // Update user's NFT array on IPFS
   const updateUserNftArrayOnIPFS = async (newNftData) => {
@@ -81,6 +126,17 @@ export const MintNft = () => {
 
       // Mint the NFT
       await mintNft(tokenURI);
+
+      // Update the global NFT feed on IPFS
+      const newGlobalFeedHash = await updateGlobalFeedOnIPFS({
+        tokenId,
+        ImgHash,
+        name,
+        desc,
+        creator: await getUserAddress(),
+      });
+
+      console.log("Updated global feed hash:", newGlobalFeedHash);
 
       // Update the user's NFT array on IPFS
       const newUserNftArrayHash = await updateUserNftArrayOnIPFS({ tokenId, ImgHash, name, desc });
@@ -172,6 +228,11 @@ export const MintNft = () => {
         await fetchUserNftArrayFromIPFS();
       }
     };
+
+    const storedHash = localStorage.getItem('globalFeedHash');
+    if (storedHash) {
+      setGlobalFeedHash(storedHash); // Load from localStorage if available
+    }
 
     initialize();
   }, []);

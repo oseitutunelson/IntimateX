@@ -12,6 +12,16 @@ import {ERC721URIStorage,ERC721} from "@openzeppelin/contracts/token/ERC721/exte
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Nft is ERC721URIStorage,Ownable{
+    struct NftData {
+        uint256 tokenId;
+        string name;
+        string description;
+        string image;
+        address creator;
+    }
+
+    NftData[] public nftFeed; // Store all NFTs in a global feed
+
    struct NFT{
      uint256 tokenId;
    }
@@ -35,6 +45,9 @@ contract Nft is ERC721URIStorage,Ownable{
         _nftsMinted[_to] += 1;
         // Track NFTs owned
         _nftsOwned[_to] += 1;
+
+         NftData memory newNft = NftData(tokenId, "Name", "Description", "ImageHash", msg.sender);
+        nftFeed.push(newNft);
    }
 
     // Get the number of NFTs minted by an address
@@ -49,5 +62,10 @@ contract Nft is ERC721URIStorage,Ownable{
 
     function tokenOfOwnerByIndex(address _owner,uint256 _index) public view returns (uint256){
         return tokenOfOwnerByIndexMapping[_owner][_index].tokenId;
+    }
+
+     // Get the entire feed
+    function getNftFeed() public view returns (NftData[] memory) {
+        return nftFeed;
     }
 }
