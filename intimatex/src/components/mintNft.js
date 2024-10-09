@@ -9,7 +9,7 @@ export const MintNft = () => {
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
   const [tokenId, setTokenId] = useState(1);
-  const [userNftArrayHash, setUserNftArrayHash] = useState(localStorage.getItem('savedNftHash')); // Get user's NFT array hash from localStorage
+  const [userNftArrayHash, setUserNftArrayHash] = useState(null); // Get user's NFT array hash from localStorage
   const [userAddress, setUserAddress] = useState(null); // User's Ethereum address
   const [globalFeedHash, setGlobalFeedHash] = useState(null); // Global NFT feed IPFS hash
 
@@ -113,7 +113,8 @@ export const MintNft = () => {
           "name": name,
           "description": desc,
           "tokenId": tokenId,
-          "image": ImgHash
+          "image": ImgHash,
+          "animation_url" : ImgHash
         },
         headers: {
           'pinata_api_key': `${REACT_APP_PINATA_API_KEY}`,
@@ -205,7 +206,7 @@ export const MintNft = () => {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
       const address = await signer.getAddress();
-      const contractAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3'; // Replace with your contract address
+      const contractAddress = '0xE824Da40c3150f0C6fE8D26e482DC207E9BD9245'; // Replace with your contract address
       const nftContract = new ethers.Contract(contractAddress, nftArtifact.abi, signer);
 
       const tx = await nftContract.mint(address, tokenId, tokenURI);
@@ -244,9 +245,9 @@ export const MintNft = () => {
         <input type="file" id='file-upload' onChange={(e) => setFileImg(e.target.files[0])} required />
         <br />
         <input type="text" onChange={(e) => setName(e.target.value)} placeholder="name" required value={name} />
-        <input type="text" onChange={(e) => setDesc(e.target.value)} placeholder="desc" required value={desc} />
+        <input type="text" onChange={(e) => setDesc(e.target.value)} placeholder="description" required value={desc} />
         <br /><br />
-        <button className="form_button" type="submit">Mint NFT</button>
+        <button className="form_button" type="submit">upload</button>
       </form>
     </div>
   );

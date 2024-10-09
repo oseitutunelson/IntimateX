@@ -31,7 +31,7 @@ const NftFeed = () => {
      <div className='feed_container'>
      <div className="nft-cards">
       {nftFeed.length === 0 ? (
-                    <p>No NFTs found.</p>
+                    <p>No posts yet.</p>
                 ) : (
                     nftFeed.map((nft, index) => (
                         <div key={index} className="nft-card">

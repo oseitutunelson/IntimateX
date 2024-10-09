@@ -3,7 +3,7 @@ require('@nomiclabs/hardhat-ethers');
 require('hardhat-deploy');
 require('dotenv').config();
 
-const {SEPOLIA_PRIVATE_KEY,ANVIL_PRIVATE_KEY} = process.env;
+const {SEPOLIA_PRIVATE_KEY,ANVIL_PRIVATE_KEY,POLYGON_AMOY} = process.env;
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -16,6 +16,10 @@ module.exports = {
    anvil:{
     url: "http://127.0.0.1:8545",
     accounts: [`0x${ANVIL_PRIVATE_KEY}`]
+   },
+   polygon :{
+    url : "https://polygon-amoy.g.alchemy.com/v2/WTBOkUzsPcn1JkfHsmYlHEHBu3u3AUu2",
+    accounts : [`0x${POLYGON_AMOY}`]
    }
 }
 };

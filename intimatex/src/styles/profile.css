@@ -1,0 +1,27 @@
+#rendered-image{
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    margin: 1.5rem;
+    border-radius: 30px;
+    width: 70px;
+    height: 70px;
+}
+input[type="file"]{
+    display: none;
+}
+.profile_image_upload{
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+.upload_img{
+   width: 30px;
+   margin: 1rem 0;
+}
+.profile_img{
+    display: flex;
+    flex-direction: column;
+}

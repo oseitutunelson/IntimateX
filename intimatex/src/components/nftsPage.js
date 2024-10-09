@@ -29,7 +29,7 @@ export const UserNfts = () => {
             const savedNftHash = localStorage.getItem('savedNftHash');
             const userIpfsHash = savedNftHash; // This should be dynamically retrieved per user
 
-            const response = await axios.get(`https://gateway.pinata.cloud/ipfs/${userIpfsHash}`);
+            const response = await axios.get(`https://gateway.pinata.cloud/ipfs/${userIpfsHash}`,{withCredentials: false});
             setNftArray(response.data); // Assuming the response data is the array of NFTs
 
         } catch (error) {
@@ -49,7 +49,7 @@ export const UserNfts = () => {
             <h3>Content Uploaded by {userAddress}</h3>
             <div className="nft-container">
                 {nftArray.length === 0 ? (
-                    <p>No NFTs found.</p>
+                    <p>No Content uploaded.</p>
                 ) : (
                     nftArray.map((nft, index) => (
                         <div key={index} className="nft-item">

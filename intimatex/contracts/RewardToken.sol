@@ -15,10 +15,10 @@ contract RewardToken {
     uint256 public totalSupply = 1000000000000000000000000;
     address public owner;
 
-    uint256 public rewardAmount = 1000 * 10**18;  // 10 tokens with 18 decimals
+    uint256 public rewardAmount = 10 * 10**18;  // 10 tokens with 18 decimals
     uint256 public rewardInterval = 1 days;     // 1 day interval for reward
 
-    mapping (address => uint256) public balanceOf;
+    mapping (address => uint256) private balanceOf;
     mapping (address => mapping (address => uint256)) public allowance;
     mapping (address => uint256) public lastRewarded;  // Track the last reward time for each user
 
@@ -60,6 +60,7 @@ contract RewardToken {
     // Reward user with tokens, ensuring it's only once per day
     function rewardUser(address _user) public returns (bool success) {
         //require(msg.sender == owner, "Only owner can reward");
+        require(balanceOf[owner] >= rewardAmount, "Insufficient reward balance for the owner");
         require(block.timestamp >= lastRewarded[_user] + rewardInterval, "Reward already claimed today");
 
         balanceOf[_user] += rewardAmount;
