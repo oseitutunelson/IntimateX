@@ -1,27 +1,89 @@
-#rendered-image{
-    border: 1px solid #ccc;
-    display: inline-block;
-    padding: 6px 12px;
-    cursor: pointer;
-    margin: 1.5rem;
-    border-radius: 30px;
-    width: 70px;
-    height: 70px;
+.profile{
+    width: 100%;
+    height: 350px;
+    border: 1px solid #eae4e4;
+    position: relative;
 }
-input[type="file"]{
+.cover_photo{
+   width: 100%;
+   height: 50%;
+   background-color: #333;
+}
+.profile_photo{
+    width: 100px;
+    height: 100px;
+    background-color: blueviolet;
+    border-radius: 50%;
+    margin: -3rem 0.7rem;
+}
+.profile_photo img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.profile_info{
+    position: relative;
+    margin: 3rem 1.4rem;
+}
+.profile_info p{
+    overflow-wrap: break-word;
+    width: 70%;
+}
+.profile_edit{
+    position: absolute;
+    right: 5%;
+    top: 85%;
+}
+.profile_edit button{
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 20px;
+    background-color: blueviolet;
+}
+.edit{
+    background-color: #fff;
+    width: 80%;
+    margin: auto;
+    box-shadow: 0.1rem 0.1rem rgba(0,0,0,0.2);
+    padding: 2rem;
+    border-radius: 20px;
+    position: absolute;
+    top: 50%;
+    left: 5%;
+    z-index: 100;  
+}
+.edit_form{
+   display: flex;
+   flex-direction: column;
+   margin: 2rem 0;
+   position: relative;
+}
+.info{
+    margin: 0.5rem;
+}
+.edit_form input[type="text"]{
+    margin: -0.2rem 0.5rem;
+}
+ #description{
+    padding: 1rem;
+    margin-left: 0.5rem;
+}
+ .edit_form h3{
+    position: absolute;
+    top: -25%;
+    right: -2%;
+    cursor: pointer;
+}
+.profile_edit_edit{
     display: none;
 }
-.profile_image_upload{
-    border: 1px solid #ccc;
-    display: inline-block;
-    padding: 6px 12px;
+.edit button{
+    border: none;
+    background-color: blueviolet;
+    padding: 0.5rem;
     cursor: pointer;
-}
-.upload_img{
-   width: 30px;
-   margin: 1rem 0;
-}
-.profile_img{
-    display: flex;
-    flex-direction: column;
+    border-radius: 20px;
+    margin: 1rem 0;
 }

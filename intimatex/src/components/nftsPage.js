@@ -46,7 +46,7 @@ export const UserNfts = () => {
 
     return (
         <div className='content'>
-            <h3>Content Uploaded by {userAddress}</h3>
+            <h3>Posts</h3>
             <div className="nft-container">
                 {nftArray.length === 0 ? (
                     <p>No Content uploaded.</p>

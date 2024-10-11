@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Navigation from './Navigation';
 import '../styles/feed.css';
-
+import truncateEthAddress from 'truncate-eth-address';
+import { Link } from 'react-router-dom';
 
 const NftFeed = () => {
   const [nftFeed, setNftFeed] = useState([]);
@@ -35,6 +36,7 @@ const NftFeed = () => {
                 ) : (
                     nftFeed.map((nft, index) => (
                         <div key={index} className="nft-card">
+                        <Link to=''> </Link> <h4>{truncateEthAddress(`${nft.creator}`)}</h4>
                             <img src={`https://emerald-fancy-gerbil-824.mypinata.cloud/ipfs/${nft.ImgHash}`} alt={nft.name} className='nft-image'/>
                             <h3>{nft.name}</h3>
                             <p>{nft.desc}</p>
