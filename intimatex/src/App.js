@@ -46,7 +46,7 @@ export default function App(){
        
       </div>
       <div className='nftsPage'>
-        
+        <UserNfts/>
       </div>
     </div>
   )

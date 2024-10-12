@@ -36,7 +36,7 @@ const NftFeed = () => {
                 ) : (
                     nftFeed.map((nft, index) => (
                         <div key={index} className="nft-card">
-                        <Link to=''> </Link> <h4>{truncateEthAddress(`${nft.creator}`)}</h4>
+                        <Link to={`/profile/${nft.creator}`}>  <h4>{truncateEthAddress(`${nft.creator}`)}</h4></Link>
                             <img src={`https://emerald-fancy-gerbil-824.mypinata.cloud/ipfs/${nft.ImgHash}`} alt={nft.name} className='nft-image'/>
                             <h3>{nft.name}</h3>
                             <p>{nft.desc}</p>

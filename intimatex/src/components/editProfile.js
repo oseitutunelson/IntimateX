@@ -198,7 +198,7 @@ useEffect(() => {
     return(
         <div className='profile'>
           <div className='cover_photo'>
-           
+            <h3>mateX</h3>  
           </div>
          <div className='profile_details'>
           {profileArray.length === 0 ? (
