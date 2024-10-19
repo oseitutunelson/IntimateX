@@ -43,7 +43,7 @@ export default function App(){
         <EditProfile/>
       </div>
       <div className='mint_nft'>
-       
+       <MintNft/>
       </div>
       <div className='nftsPage'>
         <UserNfts/>

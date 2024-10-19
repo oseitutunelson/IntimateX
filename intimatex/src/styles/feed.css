@@ -1,11 +1,17 @@
 .feed_container{
     display: block;
     width: 100%;
+    background-color: #000;
+    height: 100%;
+
 }
 .nft-feed h2{
     margin: 2rem 1.5rem;
+    color: #fff;
 }
-
+.nft-cards p{
+  color: #fff;
+}
   
   .nft-cards {
     display: grid;
@@ -15,11 +21,13 @@
   }
   
   .nft-card {
-    background-color: #f9f9f9;
+    background-color: #060606;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0.2rem .2rem rgba(0, 0, 0, 0.2);
     padding: 15px;
     transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+    color: #fff;
   }
   
   .nft-card:hover {
@@ -32,6 +40,9 @@
     object-fit: cover;
     border-radius: 10px;
   }
+.link_nft{
+  text-decoration: none;
+}  
   
   
   

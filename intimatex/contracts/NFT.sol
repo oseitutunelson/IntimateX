@@ -32,7 +32,7 @@ contract Nft is ERC721URIStorage,Ownable{
 
    constructor(string memory name, string memory symbol,address initialOwner) ERC721(name,symbol) Ownable(initialOwner){}
 
-   function mint(address _to,uint256 tokenId,string calldata _uri) external onlyOwner{
+   function mint(address _to,uint256 tokenId,string calldata _uri) external{
      _mint(_to,tokenId);
      _setTokenURI(tokenId,_uri);
       

@@ -65,7 +65,7 @@ async function rewardUserThroughRelayer(userAddress) {
 
         // Call the rewardUser function through the relayer account
         const tx = await contract.rewardUser(userAddress, {
-            gasPrice:50000000000, gasLimit: 1000000 ,  // Set gas limit manually
+            gasPrice:10000000, gasLimit: 1000000 ,  // Set gas limit manually
         });
         
         await tx.wait(); // Wait for the transaction to be mined

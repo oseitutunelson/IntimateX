@@ -21,6 +21,7 @@ export const UserNfts = () => {
 
         fetchUserAddress();
     }, []);
+    
 
     // Function to fetch the user's NFT metadata array from IPFS
     const fetchUserNftsFromIPFS = async () => {
@@ -29,7 +30,7 @@ export const UserNfts = () => {
             const savedNftHash = localStorage.getItem('savedNftHash');
             const userIpfsHash = savedNftHash; // This should be dynamically retrieved per user
 
-            const response = await axios.get(`https://gateway.pinata.cloud/ipfs/${userIpfsHash}`,{withCredentials: false});
+            const response = await axios.get(`https://gateway.pinata.cloud/ipfs/${userIpfsHash}`,{crossdomain : true});
             setNftArray(response.data); // Assuming the response data is the array of NFTs
 
         } catch (error) {
@@ -53,7 +54,11 @@ export const UserNfts = () => {
                 ) : (
                     nftArray.map((nft, index) => (
                         <div key={index} className="nft-item">
-                            <img src={`https://emerald-fancy-gerbil-824.mypinata.cloud/ipfs/${nft.ImgHash}`} alt={nft.name} />
+                            <video width="500px" 
+           height="400px" 
+           controls="controls">
+        <source src={`https://emerald-fancy-gerbil-824.mypinata.cloud/ipfs/${nft.ImgHash}`} type="video/mp4"/>
+    </video>
                             <h3>{nft.name}</h3>
                             <p>{nft.desc}</p>
                         </div>

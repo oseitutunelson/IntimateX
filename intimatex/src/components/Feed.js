@@ -14,7 +14,7 @@ const NftFeed = () => {
     if (!globalFeedHash) return;
 
     try {
-      const response = await axios.get(`https://gateway.pinata.cloud/ipfs/${globalFeedHash}`,{ crossdomain: true });
+      const response = await axios.get(`https://gateway.pinata.cloud/ipfs/${globalFeedHash}`,{crossdomain:true});
       setNftFeed(response.data); // Set the global feed data
     } catch (error) {
       console.error("Error fetching NFT feed:", error);
@@ -28,15 +28,15 @@ const NftFeed = () => {
   return (
     <div className="nft-feed">
         <Navigation/>
-      <h2>Feed</h2>
      <div className='feed_container'>
+     <h2>Feed</h2>
      <div className="nft-cards">
       {nftFeed.length === 0 ? (
                     <p>No posts yet.</p>
                 ) : (
                     nftFeed.map((nft, index) => (
                         <div key={index} className="nft-card">
-                        <Link to={`/profile/${nft.creator}`}>  <h4>{truncateEthAddress(`${nft.creator}`)}</h4></Link>
+                        <Link to={`/profile/${nft.creator}`} className='link_nft'>  <h4>{truncateEthAddress(`${nft.creator}`)}</h4></Link>
                             <img src={`https://emerald-fancy-gerbil-824.mypinata.cloud/ipfs/${nft.ImgHash}`} alt={nft.name} className='nft-image'/>
                             <h3>{nft.name}</h3>
                             <p>{nft.desc}</p>

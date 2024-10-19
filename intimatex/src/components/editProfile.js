@@ -18,14 +18,14 @@ export const EditProfile = () => {
 
     //fetch the users profile details
     const fetchUserProfileDetails = async () => {
-      if (!userProfileDetails) return; // If no hash is stored, return empty array
+      if (!userProfileDetails) return []; // If no hash is stored, return empty array
 
       try {
         const response = await axios.get(`https://gateway.pinata.cloud/ipfs/${userProfileDetails}`);
         return response.data; // Return user's NFT array
       } catch (error) {
         console.error("Error fetching user NFT array:", error);
-        return;
+        return [];
       }
     }
 
@@ -177,7 +177,7 @@ export const EditProfile = () => {
         const savedProfileHash = localStorage.getItem('profileDetails');
         const userIpfsHash = savedProfileHash; // This should be dynamically retrieved per user
 
-        const response = await axios.get(`https://gateway.pinata.cloud/ipfs/${userIpfsHash}`,{withCredentials: false});
+        const response = await axios.get(`https://gateway.pinata.cloud/ipfs/${userIpfsHash}`,{crossdomain : true});
         const userProfileDetails = [];
         userProfileDetails.push(response.data);
         setProfileArray(userProfileDetails);

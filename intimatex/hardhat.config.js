@@ -18,7 +18,7 @@ module.exports = {
     accounts: [`0x${ANVIL_PRIVATE_KEY}`]
    },
    polygon :{
-    url : "https://polygon-amoy.g.alchemy.com/v2/WTBOkUzsPcn1JkfHsmYlHEHBu3u3AUu2",
+    url : "https://falling-quick-paper.matic-amoy.quiknode.pro/29930242dd52d32ae86a4747476674a8c5187f1d",
     accounts : [`0x${POLYGON_AMOY}`]
    }
 }

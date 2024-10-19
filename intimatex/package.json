@@ -10,6 +10,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.7.7",
     "dotenv": "^16.4.5",
+    "eth-rpc-errors": "^4.0.3",
     "hardhat-deploy": "^0.12.4",
     "http-proxy-middleware": "^3.0.3",
     "react": "^18.3.1",

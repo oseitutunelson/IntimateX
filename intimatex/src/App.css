@@ -1,9 +1,11 @@
 .App{
   color: #000;
+  background-color: #000;
+  padding: 1rem 0;
 }
 .navigation{
   display: flex;
-  margin: 1rem ;
+  margin: 0 1rem ;
 }
 .navigation h3{
   cursor: pointer;
@@ -36,4 +38,7 @@
   position: absolute;
   margin-left: -1.3rem;
   cursor: pointer;
+}
+.navigation span{
+  color: #fff;
 }

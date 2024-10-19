@@ -1,5 +1,6 @@
 import { React, useState, useEffect } from 'react';
 import nftArtifact from '../contracts/NFT.sol/Nft.json';
+import nftArtifact2 from '../contracts/NFTAnvil.sol/Nft.json';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import '../styles/mint.css';
@@ -140,7 +141,14 @@ export const MintNft = () => {
       console.log("Updated global feed hash:", newGlobalFeedHash);
 
       // Update the user's NFT array on IPFS
-      const newUserNftArrayHash = await updateUserNftArrayOnIPFS({ tokenId, ImgHash, name, desc });
+      const newUserNftArrayHash = await updateUserNftArrayOnIPFS({ 
+        tokenId, 
+        ImgHash,
+        name,
+        desc 
+      });
+
+
       console.log("Updated NFT array hash:", newUserNftArrayHash);
     } catch (error) {
       console.log("Error sending JSON to IPFS:", error);
@@ -194,31 +202,39 @@ export const MintNft = () => {
   };
 
   // Mint NFT on the blockchain
-  const mintNft = async (tokenURI) => {
-    try {
-      if (!window.ethereum) {
-        alert("MetaMask is not installed!");
-        return;
-      }
+  
+      //const contractAddressPolygon = '0xF920Eb7231841C902b983C9589693831A6ff5afE';
+      //const contractAddressAnvil = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
 
-      await window.ethereum.request({ method: 'eth_requestAccounts' });
-
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const address = await signer.getAddress();
-      const contractAddress = '0xE824Da40c3150f0C6fE8D26e482DC207E9BD9245'; // Replace with your contract address
-      const nftContract = new ethers.Contract(contractAddress, nftArtifact.abi, signer);
-
-      const tx = await nftContract.mint(address, tokenId, tokenURI);
-      await tx.wait();
-      handleTokenId() // Update token ID after minting
-
-      alert(`NFT minted! Token ID: ${tokenId}`);
-    } catch (error) {
-      console.error("Error minting NFT:", error);
-    }
-  };
-
+      const mintNft = async (tokenURI) => {
+        try {
+          if (!window.ethereum) {
+            alert("MetaMask is not installed!");
+            return;
+          }
+    
+          await window.ethereum.request({ method: 'eth_requestAccounts' });
+    
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          const signer = await provider.getSigner();
+          const address = await signer.getAddress();
+          const contractAddress = '0x0be5e56e09FC888b60eF2108f74026Fe65e08a6e';
+          const contractAddressAnvil = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+          const nftContract = new ethers.Contract(contractAddressAnvil, nftArtifact2.abi, signer);
+    
+          const tx = await nftContract.mint(address, tokenId, tokenURI,{
+            gasPrice : 100000000 , gasLimit : 300000000 
+          });
+          await tx.wait();
+          setTokenId(tokenId + 1); // Update token ID after minting
+    
+          alert(`NFT minted! Token ID: ${tokenId}`);
+        } catch (error) {
+          console.error("Error minting NFT:", error);
+        }
+      };
+    
+    
   useEffect(() => {
     const initialize = async () => {
       const address = await getUserAddress();
