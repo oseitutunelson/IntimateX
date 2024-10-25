@@ -9,7 +9,7 @@ function AppRoutes() {
       <div className="App">
         <Routes>
           <Route path="/" element={ <NftFeed/> } />
-          <Route path="creator" element={ <App/> } />
+          <Route path="/creator/:walletAddress" element={ <App/> } />
           <Route path="/profile/:walletAddress" element={<Profile/>} />
         </Routes>
       </div>

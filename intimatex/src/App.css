@@ -10,22 +10,12 @@
 .navigation h3{
   cursor: pointer;
 }
-.navigation button{
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  border: none;
+.nav_buttons{
   margin-left: auto;
-  background-color: blueviolet;
-  border-radius: 1.5rem;
+  display: flex;
+  gap: 1rem;
 }
-.navigation p{
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  border: none;
-  margin-left: auto;
-  background-color: blueviolet;
-  border-radius: 1.5rem;
-}
+
 .app_link{
   text-decoration: none;
   color: blueviolet;
@@ -35,10 +25,16 @@
   margin-left: auto;
 }
 .avatar{
-  position: absolute;
-  margin-left: -1.3rem;
   cursor: pointer;
 }
 .navigation span{
-  color: #fff;
+  color: #ffffff;
+}
+
+@media screen and (max-width : 800px) {
+  .nav_buttons{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
 }

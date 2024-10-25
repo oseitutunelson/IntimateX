@@ -1,6 +1,7 @@
 import { React, useState, useEffect } from 'react';
-import nftArtifact from '../contracts/NFT.sol/Nft.json';
+import nftArtifact from '../contracts/NFTPolygon.sol/Nft.json';
 import nftArtifact2 from '../contracts/NFTAnvil.sol/Nft.json';
+import nftArtifact3 from '../contracts/NFTSepolia.sol/Nft.json';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import '../styles/mint.css';
@@ -219,11 +220,12 @@ export const MintNft = () => {
           const signer = await provider.getSigner();
           const address = await signer.getAddress();
           const contractAddress = '0x0be5e56e09FC888b60eF2108f74026Fe65e08a6e';
+          const contractAddressSepolia = '0x88ce9D496e73Ea3C16B0192EE28A20d6aE2b070f';
           const contractAddressAnvil = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
-          const nftContract = new ethers.Contract(contractAddressAnvil, nftArtifact2.abi, signer);
+          const nftContract = new ethers.Contract(contractAddress, nftArtifact.abi, signer);
     
           const tx = await nftContract.mint(address, tokenId, tokenURI,{
-            gasPrice : 100000000 , gasLimit : 300000000 
+            gasPrice : 1000000 , gasLimit : 10000000
           });
           await tx.wait();
           setTokenId(tokenId + 1); // Update token ID after minting
