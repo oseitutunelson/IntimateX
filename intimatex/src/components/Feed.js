@@ -37,9 +37,12 @@ const NftFeed = () => {
                     nftFeed.map((nft, index) => (
                         <div key={index} className="nft-card">
                         <Link to={`/profile/${nft.creator}`} className='link_nft'>  <h4>{truncateEthAddress(`${nft.creator}`)}</h4></Link>
-                        <video width="500px" 
-           height="400px" 
-           controls="controls">
+                        <video  
+            
+            className='video'
+            onMouseOver={event => event.target.play()}
+            onMouseOut={event => event.target.pause()}
+            >
         <source src={`https://emerald-fancy-gerbil-824.mypinata.cloud/ipfs/${nft.ImgHash}`} type="video/mp4"/>
     </video>
                             <h3>{nft.name}</h3>
@@ -49,6 +52,7 @@ const NftFeed = () => {
                 )}
       </div>
      </div>
+     
     </div>
   );
 };

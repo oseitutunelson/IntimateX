@@ -30,6 +30,18 @@
 .navigation span{
   color: #ffffff;
 }
+.navigation p{
+  color: #fff;
+  margin: 0.5rem 0;
+}
+.content_button{
+  background-color: blueviolet;
+  cursor: pointer;
+  border: none;
+  margin: 1rem;
+  padding: 1rem;
+  border-radius: 30px;
+}
 
 @media screen and (max-width : 800px) {
   .nav_buttons{

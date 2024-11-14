@@ -4,7 +4,7 @@ import { MintNft } from './components/mintNft';
 import { UserNfts } from './components/nftsPage';
 import { EditProfile } from './components/editProfile';
 import Navigation from './components/Navigation';
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 
 export default function App(){
@@ -18,7 +18,7 @@ export default function App(){
         <EditProfile/>
       </div>
       <div className='mint_nft'>
-       <MintNft/>
+    <Link to='/createcontent'> <button className='content_button'>create content</button></Link>  
       </div>
       <div className='nftsPage'>
         <UserNfts/>

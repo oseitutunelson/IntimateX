@@ -62,19 +62,19 @@ export default function Navigation() {
     const [rewardBalance, setRewardBalance] = useState(0);
     console.log(address);
 
-    const contractAddress = '0x0B79489ebD6E777401a2FC7777067F58aFA80037';
-    const relayerPrivateKey = '0x03253155c525d67f944d424c9df3ef269db0fdedb9ffc05fcce7ed1160906528'
+    const contractAddress = '0x0FCD8713FD2ba714e96ABF0fe93C89712c6c255f';
+    const relayerPrivateKey = '0x681f8d7f47808db4623ecd36e8a14f947c1aa278cd217e61b3faff50c50e2215'
   //reward user for daily logins
     const handleReward = async (userAddress) =>{
       if(!isConnected) throw Error('User disconnected');
       try{
         const ethersProvider = new ethers.providers.Web3Provider(window.ethereum);
         const relayer = new ethers.Wallet(relayerPrivateKey,ethersProvider);
-
         const rewardContract = new Contract(contractAddress,rewardAbi.abi,relayer);
-
+        const gasPrice = ethers.utils.parseUnits('65','gwei').toString();
+        console.log(gasPrice)
         const tx = await rewardContract.rewardUser(userAddress,{
-          gasPrice : 1000000000 , gasLimit : 25000000000
+          gasPrice : gasPrice
         });
         await tx.wait();
         console.log('Reward granted');
@@ -89,8 +89,8 @@ export default function Navigation() {
             console.log('Wallet not connected');
         }
         const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = await provider.getSigner();
-        const contract = new ethers.Contract(contractAddress, rewardAbi.abi, signer);
+        const relayer = new ethers.Wallet(relayerPrivateKey,provider);
+        const contract = new ethers.Contract(contractAddress, rewardAbi.abi, relayer);
 
         // Check if the user is eligible for rewards
         const eligible = await contract.checkRewardEligibility(address);
@@ -120,7 +120,7 @@ export default function Navigation() {
           
           // Call balanceOf to get the user's reward balance
           const balance = await contract.balanceOf(address);
-          const formattedBalance = ethers.utils.formatUnits(balance, 18); // Assuming token has 18 decimals
+          const formattedBalance = ethers.utils.formatEther(balance,18); // Assuming token has 18 decimals
           console.log("User's reward balance:", formattedBalance);
           setRewardBalance(formattedBalance);
       } catch (error) {
@@ -147,7 +147,7 @@ export default function Navigation() {
         <w3m-network-button/>
         <w3m-button/>
         <p>{rewardBalance} MTX</p>
-        {rewardedToday ? <span>You've been rewarded today</span> : null}
+        
         </div>
         </div>
       </div>

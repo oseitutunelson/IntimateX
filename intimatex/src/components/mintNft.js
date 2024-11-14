@@ -1,10 +1,13 @@
 import { React, useState, useEffect } from 'react';
 import nftArtifact from '../contracts/NFTPolygon.sol/Nft.json';
 import nftArtifact2 from '../contracts/NFTAnvil.sol/Nft.json';
-import nftArtifact3 from '../contracts/NFTSepolia.sol/Nft.json';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import '../styles/mint.css';
+import { useAppKitProvider, useAppKitAccount } from "@reown/appkit/react";
+import { BiArrowBack } from "react-icons/bi";
+import {Link} from 'react-router-dom';
+import Navigation from './Navigation';
 
 export const MintNft = () => {
   const [fileImg, setFileImg] = useState(null);
@@ -14,6 +17,10 @@ export const MintNft = () => {
   const [userNftArrayHash, setUserNftArrayHash] = useState(null); // Get user's NFT array hash from localStorage
   const [userAddress, setUserAddress] = useState(null); // User's Ethereum address
   const [globalFeedHash, setGlobalFeedHash] = useState(null); // Global NFT feed IPFS hash
+  const { address, isConnected } = useAppKitAccount()
+  const { walletProvider } = useAppKitProvider()
+
+
 
   const { REACT_APP_PINATA_API_KEY, REACT_APP_PINATA_API_SECRET } = process.env;
 
@@ -128,7 +135,7 @@ export const MintNft = () => {
       console.log("Token URI", tokenURI);
 
       // Mint the NFT
-      await mintNft(tokenURI);
+      await mintNft(tokenURI,address);
 
       // Update the global NFT feed on IPFS
       const newGlobalFeedHash = await updateGlobalFeedOnIPFS({
@@ -207,35 +214,37 @@ export const MintNft = () => {
       //const contractAddressPolygon = '0xF920Eb7231841C902b983C9589693831A6ff5afE';
       //const contractAddressAnvil = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
 
-      const mintNft = async (tokenURI) => {
-        try {
-          if (!window.ethereum) {
-            alert("MetaMask is not installed!");
-            return;
-          }
-    
-          await window.ethereum.request({ method: 'eth_requestAccounts' });
-    
-          const provider = new ethers.providers.Web3Provider(window.ethereum);
-          const signer = await provider.getSigner();
-          const address = await signer.getAddress();
-          const contractAddress = '0x0be5e56e09FC888b60eF2108f74026Fe65e08a6e';
-          const contractAddressSepolia = '0x88ce9D496e73Ea3C16B0192EE28A20d6aE2b070f';
-          const contractAddressAnvil = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
-          const nftContract = new ethers.Contract(contractAddress, nftArtifact.abi, signer);
-    
-          const tx = await nftContract.mint(address, tokenId, tokenURI,{
-            gasPrice : 1000000 , gasLimit : 10000000
-          });
-          await tx.wait();
-          setTokenId(tokenId + 1); // Update token ID after minting
-    
-          alert(`NFT minted! Token ID: ${tokenId}`);
-        } catch (error) {
-          console.error("Error minting NFT:", error);
-        }
-      };
-    
+      //mint function
+  const mintNft = async (tokenURI, address) => {
+  
+      if (!window.ethereum) {
+        alert("MetaMask is not installed!");
+        return;
+      }
+
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = await provider.getSigner();
+      const contractAddress = '0xF920Eb7231841C902b983C9589693831A6ff5afE'; 
+      const contractAddressAnvil = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+      const nftContract = new ethers.Contract(contractAddress, nftArtifact.abi, signer);
+      const gasPrice = ethers.utils.parseUnits('50','gwei').toString();
+      const gasLimit = ethers.utils.parseUnits('70','gwei').toString();
+
+      try {
+      const tx = await nftContract.mint(address, tokenId, tokenURI,{
+        gasPrice : gasPrice,
+        gasLimit : gasLimit
+      });
+      await tx.wait();
+      setTokenId(tokenId + 1); // Update token ID after minting
+
+      alert(`NFT minted! Token ID: ${tokenId}`);
+    } catch (error) {
+      console.error("Error minting NFT:", error);
+    }
+  };
     
   useEffect(() => {
     const initialize = async () => {
@@ -258,6 +267,8 @@ export const MintNft = () => {
 
   return (
     <div className='mint'>
+    <Navigation/>
+      <Link to={`/creator/${address}`}><BiArrowBack className='mint_arrow'/></Link>
       <form onSubmit={sendFileToIPFS}>
         <label htmlFor='file-upload' className='file-upload'>Upload Content</label>
         <input type="file" id='file-upload' onChange={(e) => setFileImg(e.target.files[0])} required />

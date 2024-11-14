@@ -11,6 +11,7 @@ function AppRoutes() {
           <Route path="/" element={ <NftFeed/> } />
           <Route path="/creator/:walletAddress" element={ <App/> } />
           <Route path="/profile/:walletAddress" element={<Profile/>} />
+          <Route path='/createcontent' element={<MintNft/>}/>
         </Routes>
       </div>
     )

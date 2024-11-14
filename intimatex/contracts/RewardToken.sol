@@ -22,19 +22,20 @@ contract RewardToken is ERC20{
     event Rewarded(address indexed user, uint256 indexed amount);
 
     constructor() ERC20("MateX","MTX"){
-        _mint(msg.sender,10000000000000000000000000);
+        _mint(msg.sender,1000000000000000000000000000000);
         owner = msg.sender;
     }
 
     // Reward user with tokens, ensuring it's only once per day
     function rewardUser(address _user) public returns (bool success) {
-        //require(msg.sender == owner, "Only owner can reward");
+        require(msg.sender == owner, "Only owner can reward");
         require(balanceOf(owner) >= rewardAmount, "Insufficient reward balance for the owner");
         require(block.timestamp >= lastRewarded[_user] + rewardInterval, "Reward already claimed today");
-
-        uint a = _user.balance; 
+        
+        transfer(_user, rewardAmount);
+        uint256 a = balanceOf(_user); 
         a += rewardAmount;
-        uint b = owner.balance; 
+        uint256 b = balanceOf(owner); 
         b -= rewardAmount;
         lastRewarded[_user] = block.timestamp;
 

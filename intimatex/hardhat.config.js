@@ -10,7 +10,7 @@ module.exports = {
   solidity: "0.8.27",
   networks: {
     sepolia: {
-        url: `https://eth-sepolia.g.alchemy.com/v2/rGNd6GSILO4p5ekkYo7JteZBV5TZ0MB1`,
+        url: `https://eth-sepolia.g.alchemy.com/v2/WTBOkUzsPcn1JkfHsmYlHEHBu3u3AUu2`,
         accounts: [`0x${SEPOLIA_PRIVATE_KEY}`]
     },
    anvil:{
@@ -18,7 +18,7 @@ module.exports = {
     accounts: [`0x${ANVIL_PRIVATE_KEY}`]
    },
    polygon :{
-    url : "https://falling-quick-paper.matic-amoy.quiknode.pro/29930242dd52d32ae86a4747476674a8c5187f1d",
+    url : "https://polygon-amoy.g.alchemy.com/v2/-RjLFHEFjCuQWlI2knoR4O8kmeybmE3M",
     accounts : [`0x${POLYGON_AMOY}`]
    }
 }

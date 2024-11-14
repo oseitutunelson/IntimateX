@@ -28,6 +28,9 @@ input[type="text"]{
     margin: 1rem 0.5rem;
     padding: 0.5rem;
     width: 80%;
+    background-color: #222222;
+    color: #fff;
+    border: 1px solid #333;
 }
 
 .form_button{
@@ -56,6 +59,11 @@ input[type="text"]{
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
     padding: 10px 20px;
+}
+.mint_arrow{
+    font-size: 30px;
+    cursor: pointer;
+    margin-bottom: 2rem;
 }
  /* Responsive Styles */
  @media (max-width: 768px) {
