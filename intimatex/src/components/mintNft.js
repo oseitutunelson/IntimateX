@@ -1,6 +1,5 @@
 import { React, useState, useEffect } from 'react';
-import nftArtifact from '../contracts/NFTPolygon.sol/Nft.json';
-import nftArtifact2 from '../contracts/NFTAnvil.sol/Nft.json';
+import nftArtifact from '../contracts/NFT.sol/Nft.json';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import '../styles/mint.css';
@@ -13,8 +12,8 @@ export const MintNft = () => {
   const [fileImg, setFileImg] = useState(null);
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
-  const [tokenId, setTokenId] = useState(1);
-  const [userNftArrayHash, setUserNftArrayHash] = useState(null); // Get user's NFT array hash from localStorage
+  const [tokenId, setTokenId] = useState(Date.now());
+  const [userNftArrayHash, setUserNftArrayHash] = useState(localStorage.getItem('userNftHash')); // Get user's NFT array hash from localStorage
   const [userAddress, setUserAddress] = useState(null); // User's Ethereum address
   const [globalFeedHash, setGlobalFeedHash] = useState(null); // Global NFT feed IPFS hash
   const { address, isConnected } = useAppKitAccount()
@@ -29,7 +28,7 @@ export const MintNft = () => {
     if (!globalFeedHash) return []; // If no IPFS hash yet, return empty array
 
     try {
-      const response = await axios.get(`https://gateway.pinata.cloud/ipfs/${globalFeedHash}`);
+      const response = await axios.get(`https://gateway.pinata.cloud/ipfs/${globalFeedHash}`,{crossdomain : true});
       return response.data; // Return global NFT array
     } catch (error) {
       console.error("Error fetching global feed:", error);
@@ -82,15 +81,16 @@ export const MintNft = () => {
 
 
   // Update user's NFT array on IPFS
+  /*  */
   const updateUserNftArrayOnIPFS = async (newNftData) => {
     try {
-      // Fetch the user's existing NFT array from IPFS
+      // Fetch the global feed
       const userNftArray = await fetchUserNftArrayFromIPFS();
 
-      // Add the new NFT data to the array
+      // Add the new NFT data to the feed
       userNftArray.push(newNftData);
 
-      // Upload updated array to IPFS
+      // Upload the updated feed to IPFS
       const res = await axios({
         method: "post",
         url: "https://api.pinata.cloud/pinning/pinJsonToIPFS",
@@ -100,19 +100,19 @@ export const MintNft = () => {
           'pinata_secret_api_key': `${REACT_APP_PINATA_API_SECRET}`,
         },
       });
+ // Return the new IPFS hash for the updated feed
+ const newUserNftHash = res.data.IpfsHash;
+ setUserNftArrayHash(newUserNftHash); // Update state with the new hash
 
-      // Return the new IPFS hash for the updated array
-      const newUserNftArrayHash = res.data.IpfsHash;
-      setUserNftArrayHash(newUserNftArrayHash); // Update state with the new hash
-      localStorage.setItem('savedNftHash', newUserNftArrayHash); // Save the hash in localStorage
+ // Optionally store in localStorage for persistence between refreshes
+ localStorage.setItem('userNftHash', newUserNftHash);
+ return newUserNftHash;
+} catch (error) {
+ console.error("Error updating global feed:", error);
+}
+};
 
-      return newUserNftArrayHash;
-    } catch (error) {
-      console.error("Error updating user NFT array:", error);
-    }
-  };
-
-  // Send JSON metadata to IPFS
+//  Send JSON metadata to IPFS
   const sendJSONtoIPFS = async (ImgHash) => {
     try {
       const resJSON = await axios({
@@ -136,6 +136,17 @@ export const MintNft = () => {
 
       // Mint the NFT
       await mintNft(tokenURI,address);
+      
+      // Update the user's NFT array on IPFS
+      const newUserNftArrayHash = await updateUserNftArrayOnIPFS({ 
+        tokenId, 
+        ImgHash,
+        name,
+        desc 
+      });
+
+
+      console.log("Updated NFT array hash:", newUserNftArrayHash);
 
       // Update the global NFT feed on IPFS
       const newGlobalFeedHash = await updateGlobalFeedOnIPFS({
@@ -148,16 +159,8 @@ export const MintNft = () => {
 
       console.log("Updated global feed hash:", newGlobalFeedHash);
 
-      // Update the user's NFT array on IPFS
-      const newUserNftArrayHash = await updateUserNftArrayOnIPFS({ 
-        tokenId, 
-        ImgHash,
-        name,
-        desc 
-      });
-
-
-      console.log("Updated NFT array hash:", newUserNftArrayHash);
+      
+      
     } catch (error) {
       console.log("Error sending JSON to IPFS:", error);
     }
@@ -214,7 +217,7 @@ export const MintNft = () => {
       //const contractAddressPolygon = '0xF920Eb7231841C902b983C9589693831A6ff5afE';
       //const contractAddressAnvil = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
 
-      //mint function
+     // mint function
   const mintNft = async (tokenURI, address) => {
   
       if (!window.ethereum) {
@@ -226,26 +229,23 @@ export const MintNft = () => {
 
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = await provider.getSigner();
-      const contractAddress = '0xF920Eb7231841C902b983C9589693831A6ff5afE'; 
+      const contractAddress = '0x44Ea27591ac4ae56eEebA5E17E27B59AaEA48182'; 
       const contractAddressAnvil = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
       const nftContract = new ethers.Contract(contractAddress, nftArtifact.abi, signer);
-      const gasPrice = ethers.utils.parseUnits('50','gwei').toString();
-      const gasLimit = ethers.utils.parseUnits('70','gwei').toString();
+      const gasPrice = ethers.utils.parseUnits('65','gwei').toString();
 
       try {
-      const tx = await nftContract.mint(address, tokenId, tokenURI,{
-        gasPrice : gasPrice,
-        gasLimit : gasLimit
-      });
+      const tx = await nftContract.mint(address, tokenId, tokenURI);
       await tx.wait();
-      setTokenId(tokenId + 1); // Update token ID after minting
+      handleTokenId(); // Update token ID after minting
 
-      alert(`NFT minted! Token ID: ${tokenId}`);
+      //alert(`NFT minted! Token ID: ${tokenId}`);
+      console.log(`NFT minted! Token ID: ${tokenId}`)
     } catch (error) {
       console.error("Error minting NFT:", error);
     }
   };
-    
+ 
   useEffect(() => {
     const initialize = async () => {
       const address = await getUserAddress();

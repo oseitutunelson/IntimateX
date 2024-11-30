@@ -62,7 +62,7 @@ export default function Navigation() {
     const [rewardBalance, setRewardBalance] = useState(0);
     console.log(address);
 
-    const contractAddress = '0x0FCD8713FD2ba714e96ABF0fe93C89712c6c255f';
+    const contractAddress = '0x9A4Ad6624Dc4Bc95932bc9ca813e257C48eA88aD';
     const relayerPrivateKey = '0x681f8d7f47808db4623ecd36e8a14f947c1aa278cd217e61b3faff50c50e2215'
   //reward user for daily logins
     const handleReward = async (userAddress) =>{

@@ -6,31 +6,18 @@ import '../styles/mint.css';
 export const UserNfts = () => {
     const [userAddress, setUserAddress] = useState(null);
     const [nftArray, setNftArray] = useState([]);
+    const savedNftHash = localStorage.getItem('userNftHash');
 
     const { REACT_APP_PINATA_API_KEY, REACT_APP_PINATA_API_SECRET } = process.env;
 
-    useEffect(() => {
-        const fetchUserAddress = async () => {
-            if (window.ethereum) {
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-                const signer = provider.getSigner();
-                const address = (await signer).getAddress();
-                setUserAddress(address);
-            }
-        };
-
-        fetchUserAddress();
-    }, []);
     
 
     // Function to fetch the user's NFT metadata array from IPFS
     const fetchUserNftsFromIPFS = async () => {
+        if(!savedNftHash) return;
         try {
-            // `userIpfsHash` is the IPFS hash where the user's array is stored
-            const savedNftHash = localStorage.getItem('savedNftHash');
-            const userIpfsHash = savedNftHash; // This should be dynamically retrieved per user
 
-            const response = await axios.get(`https://gateway.pinata.cloud/ipfs/${userIpfsHash}`,{crossdomain : true});
+            const response = await axios.get(`https://gateway.pinata.cloud/ipfs/${savedNftHash}`,{crossdomain : true,headers: { 'Content-Type': 'application/x-www-form-urlencoded' }});
             setNftArray(response.data); // Assuming the response data is the array of NFTs
 
         } catch (error) {
@@ -40,10 +27,9 @@ export const UserNfts = () => {
 
     // Call the function to load the user's NFTs when the component is mounted
     useEffect(() => {
-        if (userAddress) {
-            fetchUserNftsFromIPFS();
-        }
-    }, [userAddress]);
+    fetchUserNftsFromIPFS();
+        
+    }, [savedNftHash]);
 
     return (
         <div className='content'>

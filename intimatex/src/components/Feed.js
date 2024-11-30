@@ -14,7 +14,7 @@ const NftFeed = () => {
     if (!globalFeedHash) return;
 
     try {
-      const response = await axios.get(`https://gateway.pinata.cloud/ipfs/${globalFeedHash}`,{crossdomain:true});
+      const response = await axios.get(`https://gateway.pinata.cloud/ipfs/${globalFeedHash}`,{crossdomain:true,withCredentials: false});
       setNftFeed(response.data); // Set the global feed data
     } catch (error) {
       console.error("Error fetching NFT feed:", error);
