@@ -29,7 +29,7 @@ export default function Profile(){
 const fetchUserContentFromIPFS = async () => {
     try {
         // `userIpfsHash` is the IPFS hash where the user's array is stored
-        const savedNftHash = localStorage.getItem('savedNftHash');
+        const savedNftHash = localStorage.getItem('userNftHash');
         const userIpfsHash = savedNftHash; // This should be dynamically retrieved per user
 
         const response = await axios.get(`https://gateway.pinata.cloud/ipfs/${userIpfsHash}`,{withCredentials: false});
@@ -91,7 +91,9 @@ const fetchUserContentFromIPFS = async () => {
                 ) : (
                     nftArray.map((nft, index) => (
                         <div key={index} className="nft-item">
-                            <img src={`https://emerald-fancy-gerbil-824.mypinata.cloud/ipfs/${nft.ImgHash}`} alt={nft.name} />
+                            <video width='500px' height='400px' >
+                    <source src={`https://emerald-fancy-gerbil-824.mypinata.cloud/ipfs/${nft.ImgHash}`} type="video/mp4" />
+                </video>
                             <h3>{nft.name}</h3>
                             <p>{nft.desc}</p>
                         </div>

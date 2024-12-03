@@ -40,11 +40,9 @@ export const UserNfts = () => {
                 ) : (
                     nftArray.map((nft, index) => (
                         <div key={index} className="nft-item">
-                            <video width="500px" 
-           height="400px" 
-           controls="controls">
-        <source src={`https://emerald-fancy-gerbil-824.mypinata.cloud/ipfs/${nft.ImgHash}`} type="video/mp4"/>
-    </video>
+                <video width='500px' height='400px' >
+                    <source src={`https://emerald-fancy-gerbil-824.mypinata.cloud/ipfs/${nft.ImgHash}`} type="video/mp4" />
+                </video>
                             <h3>{nft.name}</h3>
                             <p>{nft.desc}</p>
                         </div>

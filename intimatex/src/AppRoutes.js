@@ -3,6 +3,7 @@ import  NftFeed  from "./components/Feed";
 import { MintNft } from "./components/mintNft";
 import Profile from "./components/profile";
 import App from "./App";
+import EditPage from "./components/editProfileProfile";
 
 function AppRoutes() {
     return (
@@ -12,6 +13,7 @@ function AppRoutes() {
           <Route path="/creator/:walletAddress" element={ <App/> } />
           <Route path="/profile/:walletAddress" element={<Profile/>} />
           <Route path='/createcontent' element={<MintNft/>}/>
+          <Route path='/editProfile/:walletAddress' element={<EditPage/>}/>
         </Routes>
       </div>
     )
