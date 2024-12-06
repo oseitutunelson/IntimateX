@@ -7,6 +7,8 @@ import { useAppKitProvider, useAppKitAccount } from "@reown/appkit/react";
 import { BiArrowBack } from "react-icons/bi";
 import {Link} from 'react-router-dom';
 import Navigation from './Navigation';
+import { fetchGlobalNftHash, updateHashOnBlockchain } from './updateHashOnBlockchain';
+import { fetchHashFromBlockchain } from './updateHashOnBlockchain';
 
 export const MintNft = () => {
   const [fileImg, setFileImg] = useState(null);
@@ -25,6 +27,7 @@ export const MintNft = () => {
 
    // Fetch the global NFT feed from IPFS
    const fetchGlobalFeedFromIPFS = async () => {
+    const globalFeedHash = await fetchGlobalNftHash();
     if (!globalFeedHash) return []; // If no IPFS hash yet, return empty array
 
     try {
@@ -37,6 +40,7 @@ export const MintNft = () => {
   };
   // Fetch the user's existing NFT array from IPFS
   const fetchUserNftArrayFromIPFS = async () => {
+    const userNftArrayHash = await fetchHashFromBlockchain(address);
     if (!userNftArrayHash) return []; // If no hash is stored, return empty array
 
     try {
@@ -69,6 +73,7 @@ export const MintNft = () => {
       });
  // Return the new IPFS hash for the updated feed
  const newGlobalFeedHash = res.data.IpfsHash;
+ await updateHashOnBlockchain(newGlobalFeedHash);
  setGlobalFeedHash(newGlobalFeedHash); // Update state with the new hash
 
  // Optionally store in localStorage for persistence between refreshes
@@ -102,13 +107,14 @@ export const MintNft = () => {
       });
  // Return the new IPFS hash for the updated feed
  const newUserNftHash = res.data.IpfsHash;
- setUserNftArrayHash(newUserNftHash); // Update state with the new hash
-
+ // Update state with the new hash
+ await updateHashOnBlockchain(newUserNftHash); 
+ setUserNftArrayHash(newUserNftHash);
  // Optionally store in localStorage for persistence between refreshes
  localStorage.setItem('userNftHash', newUserNftHash);
  return newUserNftHash;
 } catch (error) {
- console.error("Error updating global feed:", error);
+ console.error("Error updating user nft feed:", error);
 }
 };
 

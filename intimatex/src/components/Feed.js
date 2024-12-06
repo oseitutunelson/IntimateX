@@ -4,13 +4,14 @@ import Navigation from './Navigation';
 import '../styles/feed.css';
 import truncateEthAddress from 'truncate-eth-address';
 import { Link } from 'react-router-dom';
+import { fetchGlobalNftHash } from './updateHashOnBlockchain';
 
 const NftFeed = () => {
   const [nftFeed, setNftFeed] = useState([]);
   const globalFeedHash = localStorage.getItem('globalFeedHash');
   // Fetch global NFT feed from IPFS
   const fetchNftFeed = async () => {
-    
+    const globalFeedHash = await fetchGlobalNftHash();
     if (!globalFeedHash) return;
 
     try {
@@ -21,9 +22,21 @@ const NftFeed = () => {
     }
   };
 
+  // useEffect(() => {
+  //   fetchNftFeed();
+  // }, [globalFeedHash]);
   useEffect(() => {
-    fetchNftFeed();
-  }, [globalFeedHash]);
+    const loadGlobalFeed = async () => {
+        const globalFeedHash = await fetchGlobalNftHash();
+        if (globalFeedHash) {
+            const response = await axios.get(`https://gateway.pinata.cloud/ipfs/${globalFeedHash}`);
+            setNftFeed(response.data); // Update state with fetched global feed
+        }
+    };
+
+    loadGlobalFeed();
+}, []);
+
 
   return (
     <div className="nft-feed">

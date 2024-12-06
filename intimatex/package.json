@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@chainlink/contracts": "^1.2.0",
+    "@chainlink/contracts": "^1.3.0",
     "@openzeppelin/contracts": "^5.0.2",
     "@reown/appkit": "^1.1.7",
     "@reown/appkit-adapter-wagmi": "^1.1.7",

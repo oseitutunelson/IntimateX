@@ -2,9 +2,12 @@ import { React, useState, useEffect } from 'react';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import '../styles/mint.css';
+import { fetchHashFromBlockchain } from './updateHashOnBlockchain';
+import { useAppKitProvider, useAppKitAccount } from "@reown/appkit/react";
+
 
 export const UserNfts = () => {
-    const [userAddress, setUserAddress] = useState(null);
+    const { address, isConnected } = useAppKitAccount()
     const [nftArray, setNftArray] = useState([]);
     const savedNftHash = localStorage.getItem('userNftHash');
 
@@ -14,6 +17,7 @@ export const UserNfts = () => {
 
     // Function to fetch the user's NFT metadata array from IPFS
     const fetchUserNftsFromIPFS = async () => {
+        const savedNftHash = await fetchHashFromBlockchain(address)
         if(!savedNftHash) return;
         try {
 
@@ -40,6 +44,7 @@ export const UserNfts = () => {
                 ) : (
                     nftArray.map((nft, index) => (
                         <div key={index} className="nft-item">
+                            <p>ID : {nft.tokenId}</p>
                 <video width='500px' height='400px' >
                     <source src={`https://emerald-fancy-gerbil-824.mypinata.cloud/ipfs/${nft.ImgHash}`} type="video/mp4" />
                 </video>
