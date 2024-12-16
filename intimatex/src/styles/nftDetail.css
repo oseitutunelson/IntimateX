@@ -1,0 +1,27 @@
+.nft-detail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .video-container {
+    width: 80%;
+    margin-bottom: 20px;
+  }
+  
+  .nft-video {
+    width: 100%;
+    height: auto;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  .nft-info {
+    text-align: center;
+  }
+  
+  
+  
+  
+  

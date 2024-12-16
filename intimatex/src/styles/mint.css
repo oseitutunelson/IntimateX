@@ -65,6 +65,38 @@ input[type="text"]{
     cursor: pointer;
     margin-bottom: 2rem;
 }
+.content-settings{
+    margin-top: 6rem;
+}
+.content-settings h3,p{
+    color: #fff;
+}
+.content-settings h3{
+    font-size: 2.2rem;
+}
+.content-settings p{
+    font-weight: 200;
+}
+.c_settings_form{
+    margin-top: 3rem;
+    display: flex;
+    flex-direction: column;
+}
+input[type="number"]{
+    margin: 1rem 0.5rem;
+    padding: 0.5rem;
+    width: 80%;
+    background-color: #222222;
+    color: #fff;
+    border: 1px solid #333;
+}
+.c_settings_form button{
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    background-color: blueviolet;
+    border-radius: 20px;
+}
  /* Responsive Styles */
  @media (max-width: 768px) {
     .nft-container {

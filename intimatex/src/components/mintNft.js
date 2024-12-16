@@ -9,6 +9,7 @@ import {Link} from 'react-router-dom';
 import Navigation from './Navigation';
 import { fetchGlobalNftHash, updateHashOnBlockchain } from './updateHashOnBlockchain';
 import { fetchHashFromBlockchain } from './updateHashOnBlockchain';
+import { ContentSettings } from './contentSettings';
 
 export const MintNft = () => {
   const [fileImg, setFileImg] = useState(null);
@@ -20,7 +21,7 @@ export const MintNft = () => {
   const [globalFeedHash, setGlobalFeedHash] = useState(null); // Global NFT feed IPFS hash
   const { address, isConnected } = useAppKitAccount()
   const { walletProvider } = useAppKitProvider()
-
+  const [contentId,setContentId] = useState("")
 
 
   const { REACT_APP_PINATA_API_KEY, REACT_APP_PINATA_API_SECRET } = process.env;
@@ -246,6 +247,7 @@ export const MintNft = () => {
       handleTokenId(); // Update token ID after minting
 
       //alert(`NFT minted! Token ID: ${tokenId}`);
+      setContentId(tokenId);
       console.log(`NFT minted! Token ID: ${tokenId}`)
     } catch (error) {
       console.error("Error minting NFT:", error);
@@ -283,7 +285,14 @@ export const MintNft = () => {
         <input type="text" onChange={(e) => setDesc(e.target.value)} placeholder="description" required value={desc} />
         <br /><br />
         <button className="form_button" type="submit">upload</button>
+        <br /><br />
+        {
+          mintNft ? <p>content ID : {contentId}</p> : <p></p>
+         }
       </form>
+      <div>
+        <ContentSettings/>
+      </div>
     </div>
   );
 };

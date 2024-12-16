@@ -8,9 +8,9 @@ async function main() {
   // Get the contract factory
   const Contract = await ethers.getContractFactory("Content");
 
-
+  const priceFeedAddress = "0x694AA1769357215DE4FAC081bf1f309aDC325306";
   // Deploy the contract with the constructor parameters
-  const contract = await Contract.deploy();
+  const contract = await Contract.deploy(priceFeedAddress);
 
   // Wait for the contract to be deployed
   await contract.deployed();

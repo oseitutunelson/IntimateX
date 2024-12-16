@@ -5,13 +5,18 @@ pragma solidity ^0.8.20;
 /**
  * @title  Nft  Contract
  * @author Owusu Nelson Osei Tutu
- * @notice A nft contract with additional features such as tokenURI
+ * @notice A nft contract with additional features 
  */
 
 import {ERC721URIStorage,ERC721} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {Content} from './Content.sol';
 
 contract Nft is ERC721URIStorage,Ownable{
+    
+    Content public contentContract;
+    
+     //nft data structure
     struct NftData {
         uint256 tokenId;
         string name;
@@ -30,8 +35,15 @@ contract Nft is ERC721URIStorage,Ownable{
     mapping(address => uint256) private _nftsOwned;
     mapping (address => mapping (uint256 => NFT)) private tokenOfOwnerByIndexMapping;
 
-   constructor(string memory name, string memory symbol,address initialOwner) ERC721(name,symbol) Ownable(initialOwner){}
+   constructor(string memory name, string memory symbol,address initialOwner,address contentContractAddress,address priceFeed) ERC721(name,symbol) Ownable(initialOwner){
+    contentContract = new Content(priceFeed,contentContractAddress);
+   }
 
+   /**
+    *   Functions
+    */
+
+   //mint function
    function mint(address _to,uint256 tokenId,string calldata _uri) external{
      _mint(_to,tokenId);
      _setTokenURI(tokenId,_uri);
@@ -49,6 +61,9 @@ contract Nft is ERC721URIStorage,Ownable{
          NftData memory newNft = NftData(tokenId, "Name", "Description", "ImageHash", msg.sender);
         nftFeed.push(newNft);
    }
+
+
+     /** Getter Functions */
 
     // Get the number of NFTs minted by an address
     function nftsMinted(address owner) external view returns (uint256) {
@@ -68,4 +83,9 @@ contract Nft is ERC721URIStorage,Ownable{
     function getNftFeed() public view returns (NftData[] memory) {
         return nftFeed;
     }
+
+    //get Price of nft
+    function getNftPrice(uint256 tokenId, address owner) external view returns (uint256) {
+        return contentContract.getContentPrice(owner, tokenId);
+    } 
 }
