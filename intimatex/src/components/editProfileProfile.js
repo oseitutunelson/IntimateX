@@ -6,7 +6,7 @@ import Navigation from './Navigation';
 import { Link } from 'react-router-dom';
 import { BiArrowBack } from 'react-icons/bi';
 import { useAppKitProvider, useAppKitAccount } from "@reown/appkit/react";
-
+import { fetchUserProfileHash , updateProfileHash } from './updateProfile';
 
 export default function EditPage() {
     const [editForm , setEditForm] = useState(false);
@@ -15,6 +15,7 @@ export default function EditPage() {
     const [username,setUsername] = useState('');
     const [description,setDescription] = useState('');
     const [profileImg, setProfileImg] = useState(null);
+    const [coverImg, setCoverImg] = useState(null);
     const { address, isConnected } = useAppKitAccount()
 
 
@@ -22,6 +23,7 @@ export default function EditPage() {
 
     //fetch the users profile details
     const fetchUserProfileDetails = async () => {
+      const userProfileDetails = await fetchUserProfileHash(address);
         if (!userProfileDetails) return []; // If no hash is stored, return empty array
   
         try {
@@ -55,7 +57,9 @@ export default function EditPage() {
     
           // Return the new IPFS hash for the updated array
           const newUserProfileHash = res.data.IpfsHash;
-          setUserProfileDetails(newUserProfileHash); // Update state with the new hash
+          setUserProfileDetails(newUserProfileHash);
+           // Update state with the new hash
+           await updateProfileHash(newUserProfileHash);
           localStorage.setItem('savedProfileDetails', newUserProfileHash); // Save the hash in localStorage
     
           return newUserProfileHash;
@@ -66,66 +70,92 @@ export default function EditPage() {
   
 
      // Send JSON metadata to IPFS
-  const sendJSONtoIPFS = async (ProfileHash) => {
-    try {
-      const resJSON = await axios({
-        method: "post",
-        url: "https://api.pinata.cloud/pinning/pinJsonToIPFS",
-        data: {
-          "username": username,
-          "description": description,
-          "profile_image": ProfileHash
-        },
-        headers: {
-          'pinata_api_key': `${REACT_APP_PINATA_API_KEY}`,
-          'pinata_secret_api_key': `${REACT_APP_PINATA_API_SECRET}`,
-        },
-      });
-
-      const tokenURI = `${resJSON.data.IpfsHash}`;
-      console.log("Token URI", tokenURI);
-      localStorage.setItem('profileDetails',tokenURI);
-
-
-      // Update the user's profile array on IPFS
-      const newUserProfileHash = await updateUserProfileArrayOnIPFS({ username, ProfileHash, description });
-      console.log("Updated profile array hash:", newUserProfileHash);
-    } catch (error) {
-      console.log("Error sending JSON to IPFS:", error);
-    }
-  };
+     const sendJSONtoIPFS = async (profileHash, coverHash) => {
+      try {
+        const resJSON = await axios({
+          method: "post",
+          url: "https://api.pinata.cloud/pinning/pinJsonToIPFS",
+          data: {
+            "username": username,
+            "description": description,
+            "profile_image": profileHash,
+            "cover_image": coverHash
+          },
+          headers: {
+            'pinata_api_key': `${REACT_APP_PINATA_API_KEY}`,
+            'pinata_secret_api_key': `${REACT_APP_PINATA_API_SECRET}`,
+          },
+        });
+    
+        const tokenURI = `${resJSON.data.IpfsHash}`;
+        console.log("Token URI", tokenURI);
+        localStorage.setItem('profileDetails', tokenURI);
+    
+        // Update the user's profile array on IPFS
+        const newUserProfileHash = await updateUserProfileArrayOnIPFS({
+          username,
+          profile_image: profileHash,
+          cover_image: coverHash,
+          description
+        });
+        console.log("Updated profile array hash:", newUserProfileHash);
+      } catch (error) {
+        console.log("Error sending JSON to IPFS:", error);
+      }
+    };
+    
 
   // Send file to IPFS
   const sendFileToIPFS = async (e) => {
     e.preventDefault();
-
-    if (profileImg) {
+  
+    if (profileImg && coverImg) {
       try {
-        const formData = new FormData();
-        formData.append("file",profileImg);
-
-        const resFile = await axios({
+        const formDataProfile = new FormData();
+        const formDataCover = new FormData();
+  
+        // Append profile photo
+        formDataProfile.append("file", profileImg);
+        const resProfile = await axios({
           method: "post",
           url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
-          data: formData,
+          data: formDataProfile,
           headers: {
             'pinata_api_key': `34285d0c475ef08f741a`,
             'pinata_secret_api_key': `a4cb2ed7de89a61ab079c78b29058dbdb63a675f9480823cc099ae5c813903b6`,
             "Content-Type": "multipart/form-data"
           },
         });
-
-        const ImgHash = resFile.data.IpfsHash;
-        console.log("Image Hash:", ImgHash);
-
-        // Send JSON metadata to IPFS
-        await sendJSONtoIPFS(ImgHash);
+  
+        // Append cover photo
+        formDataCover.append("file", coverImg);
+        const resCover = await axios({
+          method: "post",
+          url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
+          data: formDataCover,
+          headers: {
+            'pinata_api_key': `34285d0c475ef08f741a`,
+            'pinata_secret_api_key': `a4cb2ed7de89a61ab079c78b29058dbdb63a675f9480823cc099ae5c813903b6`,
+            "Content-Type": "multipart/form-data"
+          },
+        });
+  
+        const profileImgHash = resProfile.data.IpfsHash;
+        const coverImgHash = resCover.data.IpfsHash;
+  
+        console.log("Profile Image Hash:", profileImgHash);
+        console.log("Cover Image Hash:", coverImgHash);
+  
+        // Send JSON metadata with both hashes to IPFS
+        await sendJSONtoIPFS(profileImgHash, coverImgHash);
       } catch (error) {
-        console.log("Error uploading file to IPFS:", error);
+        console.log("Error uploading files to IPFS:", error);
       }
+    } else {
+      console.error("Both profile photo and cover photo are required.");
     }
   };
-
+  
   useEffect(() => {
     if (walletAddress) {
         console.log(walletAddress);
@@ -145,6 +175,8 @@ export default function EditPage() {
             <form className='edit_form' onSubmit={sendFileToIPFS}>
               <label htmlFor='profile_photo' className='file-upload'>upload profile photo</label>
               <input type='file' id='profile_photo' onChange={(e) => setProfileImg(e.target.files[0])} name='profile_photo'/>
+              <label htmlFor='cover_photo' className='file-upload'>Upload Cover Photo</label>
+              <input type='file' id='cover_photo' onChange={(e) => setCoverImg(e.target.files[0])} name='cover_photo'/>
               <label htmlFor='username' className='info'>Username</label>
               <input type='text' id='username' name='username' onChange={(e) => setUsername(e.target.value)} placeholder='username' required value={username}/>
               <label htmlFor='description' className='info'>Description</label>
