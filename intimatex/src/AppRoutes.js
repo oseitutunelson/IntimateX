@@ -5,6 +5,7 @@ import Profile from "./components/profile";
 import App from "./App";
 import EditPage from "./components/editProfileProfile";
 import NftDetail from "./components/NftDetail";
+import { Subscription } from "./components/subscription";
 
 function AppRoutes() {
     return (
@@ -16,6 +17,7 @@ function AppRoutes() {
           <Route path='/createcontent' element={<MintNft/>}/>
           <Route path='/editProfile/:walletAddress' element={<EditPage/>}/>
           <Route path="/nft/:id" element={<NftDetail/>}/>
+          <Route path="/subscribe" element={<Subscription/>}/>
         </Routes>
       </div>
     )

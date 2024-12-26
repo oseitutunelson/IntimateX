@@ -233,6 +233,7 @@ export const MintNft = () => {
       }
 
       await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const status = document.getElementById("status");
 
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = await provider.getSigner();
@@ -243,7 +244,9 @@ export const MintNft = () => {
 
       try {
       const tx = await nftContract.mint(address, tokenId, tokenURI);
+      status.textContent = "Transaction submitted. Waiting for confirmation...";
       await tx.wait();
+      status.textContent = "Transaction confirmed!";
       handleTokenId(); // Update token ID after minting
 
       //alert(`NFT minted! Token ID: ${tokenId}`);
@@ -285,11 +288,14 @@ export const MintNft = () => {
         <input type="text" onChange={(e) => setDesc(e.target.value)} placeholder="description" required value={desc} />
         <br /><br />
         <button className="form_button" type="submit">upload</button>
+        <p id="status"></p>
         <br /><br />
         {
           mintNft ? <p>content ID : {contentId}</p> : <p></p>
          }
+         
       </form>
+      
       <div>
         <ContentSettings/>
       </div>

@@ -1,0 +1,23 @@
+.subscribe_form{
+    color: #fff;
+    margin: 2rem 3rem;
+}
+.subscribe_form ul{
+    margin: 2rem 0;
+}
+.subscribe_form button{
+    background-color: blueviolet;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+.subscribe_form h1{
+    font-size: 3rem;
+}
+#status {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555;
+  }

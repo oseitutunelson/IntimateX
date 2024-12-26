@@ -97,7 +97,7 @@ const fetchUserContentFromIPFS = async () => {
                     <p>No Content uploaded.</p>
                 ) : (
                     nftArray.map((nft, index) => (
-                        <div key={index} className="nft-item">
+                        <div key={index} className="nft-item item">
                              <Link 
     to={`/nft/${nft.ImgHash}`} 
     state={{ nft }} 

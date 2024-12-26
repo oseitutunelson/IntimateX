@@ -88,3 +88,11 @@
     cursor: pointer;
     
 }
+#status {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555;
+  }
+.item{
+   gap: 0 10px;
+}  

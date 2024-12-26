@@ -88,6 +88,7 @@ export default function EditPage() {
         });
     
         const tokenURI = `${resJSON.data.IpfsHash}`;
+
         console.log("Token URI", tokenURI);
         localStorage.setItem('profileDetails', tokenURI);
     
@@ -182,7 +183,7 @@ export default function EditPage() {
               <label htmlFor='description' className='info'>Description</label>
               <textarea id='description' name='description' onChange={(e) => setDescription(e.target.value)} placeholder='description' value={description}></textarea>
               <button type='submit' onClick={handleFormEdit} className='form_button'>Save Changes</button>
-        
+              <p id='status'></p>
             </form>
           </div>
        </div>

@@ -8,12 +8,13 @@ export const updateProfileHash = async(hash) => {
     if(!window.ethereum){
         console.log("No metamask found");
     }
-   
+        const status = document.getElementById("status");
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = await provider.getSigner();
         const contract = new ethers.Contract(contractAddress, contractAbi.abi, signer);
 
         const tx = await contract.updateProfileHash(hash);
+        status.textContent = 'Profile Edited';
         console.log("profile hash saved");
     }catch(error){
         console.log("Profile hash save failed",error);

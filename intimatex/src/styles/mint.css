@@ -114,3 +114,8 @@ input[type="number"]{
       gap: 10px;
     }
 }
+#status {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555;
+  }

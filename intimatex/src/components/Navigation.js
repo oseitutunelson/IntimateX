@@ -10,6 +10,8 @@ import { arbitrum, mainnet,base, scroll, polygonAmoy, polygon,sepolia } from '@r
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import Avatar from 'react-avatar';
+import contractAbi from '../contracts/Subscription.sol/Subscription.json';
+import truncateEthAddress from 'truncate-eth-address';
 
 // 0. Setup queryClient
 const queryClient = new QueryClient()
@@ -60,6 +62,7 @@ export default function Navigation() {
     const { walletProvider } = useAppKitProvider()
     const [rewardedToday , setRewardedToday ] = useState(false);
     const [rewardBalance, setRewardBalance] = useState(0);
+    const [isCreator,setCreator] = useState(true);
     console.log(address);
 
     const contractAddress = '0x9A4Ad6624Dc4Bc95932bc9ca813e257C48eA88aD';
@@ -122,17 +125,36 @@ export default function Navigation() {
           const balance = await contract.balanceOf(address);
           const formattedBalance = ethers.utils.formatEther(balance,18); // Assuming token has 18 decimals
           console.log("User's reward balance:", formattedBalance);
+          const creator = await getCreator();
+          setCreator(creator);
+          console.log(creator);
           setRewardBalance(formattedBalance);
       } catch (error) {
           console.error("Error fetching reward balance:", error);
       }
   };
 
+  const getCreator = async() =>{
+     try{
+       const provider = new ethers.providers.Web3Provider(window.ethereum);
+       const signer = await provider.getSigner();
+       const contractAddress = "0x759C52837dD5EF03C32a0A733f593DcC74dfab6c"
+       const contract = new ethers.Contract(contractAddress,contractAbi.abi,signer);
+
+       const tx = await contract.getSubscriber(address);
+       return tx;
+       console.log('is a creator',tx);
+     }catch(error){
+      console.log('Not a creator');
+     }
+  }
+
 
  useEffect(() =>{
   if(isConnected){
     checkRewardEligibility();
     getRewardBalance();
+    getCreator();
   }
    
  },[])
@@ -143,7 +165,7 @@ export default function Navigation() {
         <div className='navigation'>
         <Link to='/' className='app_link'><h3>intimateX</h3></Link>
         <div className='nav_buttons'>
-        {isConnected ? <Link to={`/creator/${address}`}><Avatar name='Mate X' color='#333' size='45px' round className='avatar'/></Link> : ''}
+        {isCreator ? <Link to={`/creator/${address}`}><Avatar name='Creator' color='#333' size='45px' round className='avatar'/></Link> : ''}
         <w3m-network-button/>
         <w3m-button/>
         <p>{rewardBalance} MTX</p>

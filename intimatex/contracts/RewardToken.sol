@@ -26,6 +26,16 @@ contract RewardToken is ERC20{
         owner = msg.sender;
     }
 
+    modifier onlyOwner {
+        require(msg.sender == owner);
+        _;
+    }
+
+     // Function to allow the owner to mint more tokens if needed
+    function mint(address to, uint256 amount) public onlyOwner {
+        _mint(to, amount);
+    }
+
     // Reward user with tokens, ensuring it's only once per day
     function rewardUser(address _user) public returns (bool success) {
         require(msg.sender == owner, "Only owner can reward");
@@ -42,6 +52,23 @@ contract RewardToken is ERC20{
         emit Rewarded(_user, rewardAmount);
         emit Transfer(owner, _user, rewardAmount);
         return true;
+    }
+
+    function reward(uint256 amount,address user) public returns (bool success){
+        require(amount > 0, "Reward amount must be greater than 0");
+        require(msg.sender == owner, "Only owner can reward");
+        require(balanceOf(owner) >= amount,"insufficient amount");
+        
+        transfer(user, amount);
+        uint256 a = balanceOf(user); 
+        a += amount;
+        uint256 b = balanceOf(owner); 
+        b -= amount;
+
+        emit Rewarded(user, amount);
+        emit Transfer(owner, user, amount);
+        return true;
+
     }
 
     function checkRewardEligibility(address _user) public view returns (bool) {

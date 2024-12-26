@@ -5,11 +5,14 @@ import '../styles/feed.css';
 import truncateEthAddress from 'truncate-eth-address';
 import { Link } from 'react-router-dom';
 import { fetchGlobalNftHash } from './updateHashOnBlockchain';
+import { handleTimeUpdate } from './videoviews';
+import { fetchViewData } from './videoviews';
 
 const NftFeed = () => {
   const [nftFeed, setNftFeed] = useState([]);
   const globalFeedHash = localStorage.getItem('globalFeedHash');
   const [nft,setNft] = useState("");
+  const [views,setViews] = useState("");
   // Fetch global NFT feed from IPFS
   const fetchNftFeed = async () => {
     const globalFeedHash = await fetchGlobalNftHash();
@@ -38,12 +41,18 @@ const NftFeed = () => {
     loadGlobalFeed();
 }, []);
 
+  
+
 
   return (
     <div className="nft-feed">
         <Navigation/>
      <div className='feed_container'>
-     <h2>Feed</h2>
+     
+     <div className='subscriber'>
+      <h2>Feed</h2>
+      <Link to='/subscribe'><button>Become a creator</button></Link>
+     </div>
      
      <div className="nft-cards">
       
@@ -62,13 +71,16 @@ const NftFeed = () => {
             className='video'
             onMouseOver={event => event.target.play()}
             onMouseOut={event => event.target.pause()}
+            onTimeUpdate={event => handleTimeUpdate(event,nft)}
             >
         <source src={`https://emerald-fancy-gerbil-824.mypinata.cloud/ipfs/${nft.ImgHash}`} type="video/mp4"/>
     </video>
     <Link to={`/profile/${nft.creator}`} className='link_nft2'>  <h4>{truncateEthAddress(`${nft.creator}`)}</h4></Link>
                             <h3>{nft.name}</h3>
                             <p>{nft.desc}</p>
+                            
                             </Link>
+                          
                         </div>
                     ))
                 )}
