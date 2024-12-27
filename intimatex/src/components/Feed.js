@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom';
 import { fetchGlobalNftHash } from './updateHashOnBlockchain';
 import { handleTimeUpdate } from './videoviews';
 import { fetchViewData } from './videoviews';
+import {FaEthereum} from 'react-icons/fa';
+import { purchaseNftAccess,checkContentAccess } from './content';
 
 const NftFeed = () => {
   const [nftFeed, setNftFeed] = useState([]);
@@ -61,7 +63,27 @@ const NftFeed = () => {
                 ) : (
                     nftFeed.map((nft, index) => (
                         <div key={index} className="nft-card">
-                          <Link 
+                          {nft.price == 0 ? 
+                                 <Link 
+                                 to={`/nft/${nft.ImgHash}`} 
+                                 state={{ nft }} 
+                                 className="link_nft"
+                               >
+                                                     <video  
+                                         
+                                         className='video'
+                                         onMouseOver={event => event.target.play()}
+                                         onMouseOut={event => event.target.pause()}
+                                         onTimeUpdate={event => handleTimeUpdate(event,nft)}
+                                         >
+                                     <source src={`https://emerald-fancy-gerbil-824.mypinata.cloud/ipfs/${nft.ImgHash}`} type="video/mp4"/>
+                                 </video>
+                                 <Link to={`/profile/${nft.creator}`} className='link_nft2'>  <h4>{truncateEthAddress(`${nft.creator}`)}</h4></Link>
+                                                         <h3>{nft.name}</h3>
+                                                         <p>{nft.desc}</p>
+                                                         <p>Price : Free Access</p>
+                                                         
+                                                         </Link> :         <Link 
     to={`/nft/${nft.ImgHash}`} 
     state={{ nft }} 
     className="link_nft"
@@ -78,8 +100,11 @@ const NftFeed = () => {
     <Link to={`/profile/${nft.creator}`} className='link_nft2'>  <h4>{truncateEthAddress(`${nft.creator}`)}</h4></Link>
                             <h3>{nft.name}</h3>
                             <p>{nft.desc}</p>
+                            <p>Price : {nft.price} ETH <FaEthereum className='eth'/></p>
                             
                             </Link>
+                        }
+                  
                           
                         </div>
                     ))

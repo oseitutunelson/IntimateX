@@ -22,6 +22,8 @@ export const MintNft = () => {
   const { address, isConnected } = useAppKitAccount()
   const { walletProvider } = useAppKitProvider()
   const [contentId,setContentId] = useState("")
+  const [price , setPrice] = useState(0);
+  const [isOneTimePurchase, setIsOneTimePurchase] = useState(false);
 
 
   const { REACT_APP_PINATA_API_KEY, REACT_APP_PINATA_API_SECRET } = process.env;
@@ -130,7 +132,8 @@ export const MintNft = () => {
           "description": desc,
           "tokenId": tokenId,
           "image": ImgHash,
-          "animation_url" : ImgHash
+          "price" : price,
+          "isOneTimePurchase" : isOneTimePurchase
         },
         headers: {
           'pinata_api_key': `${REACT_APP_PINATA_API_KEY}`,
@@ -149,7 +152,9 @@ export const MintNft = () => {
         tokenId, 
         ImgHash,
         name,
-        desc 
+        desc,
+        price,
+        isOneTimePurchase
       });
 
 
@@ -162,6 +167,8 @@ export const MintNft = () => {
         name,
         desc,
         creator: await getUserAddress(),
+        price,
+        isOneTimePurchase
       });
 
       console.log("Updated global feed hash:", newGlobalFeedHash);
@@ -237,13 +244,11 @@ export const MintNft = () => {
 
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = await provider.getSigner();
-      const contractAddress = '0x44Ea27591ac4ae56eEebA5E17E27B59AaEA48182'; 
-      const contractAddressAnvil = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+      const contractAddress = '0x131AB0F6A747Fa32B7e7c149FBBAA73203Bdb1b6'; 
       const nftContract = new ethers.Contract(contractAddress, nftArtifact.abi, signer);
-      const gasPrice = ethers.utils.parseUnits('65','gwei').toString();
 
       try {
-      const tx = await nftContract.mint(address, tokenId, tokenURI);
+      const tx = await nftContract.mint(address, tokenId, tokenURI,price,isOneTimePurchase);
       status.textContent = "Transaction submitted. Waiting for confirmation...";
       await tx.wait();
       status.textContent = "Transaction confirmed!";
@@ -285,15 +290,13 @@ export const MintNft = () => {
         <input type="file" id='file-upload' onChange={(e) => setFileImg(e.target.files[0])} required />
         <br />
         <input type="text" onChange={(e) => setName(e.target.value)} placeholder="name" required value={name} />
-        <input type="text" onChange={(e) => setDesc(e.target.value)} placeholder="description" required value={desc} />
+        <input type="text" onChange={(e) => setDesc(e.target.value)} placeholder="description" required value={desc} /><br/>
+        <label htmlFor='price' className='price'>Price (Leave Zero if you want content to be free -- earn on views, let your fans enjoy your porn)</label>
+        <input type="number" onChange={(e) => setPrice(e.target.value)} placeholder="Price in ETH" required value={price} />
+        <input type="checkbox" onChange={(e) => setIsOneTimePurchase(e.target.checked)} /><span className='purchase'>One-Time Purchase</span> 
         <br /><br />
         <button className="form_button" type="submit">upload</button>
         <p id="status"></p>
-        <br /><br />
-        {
-          mintNft ? <p>content ID : {contentId}</p> : <p></p>
-         }
-         
       </form>
       
       <div>

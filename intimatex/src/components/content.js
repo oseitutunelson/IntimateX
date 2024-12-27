@@ -1,85 +1,34 @@
-import React from "react";
-import contractAbi from "../contracts/Content.sol/Content.json";
-import { ethers } from "ethers";
+import {React} from 'react'
+import contractAbi from '../contracts/NFT.sol/Nft.json';
+import { ethers } from 'ethers';
 
-export const setContentPrice = async (contentId,contentPrice) =>{
+const contractAddress = '0x131AB0F6A747Fa32B7e7c149FBBAA73203Bdb1b6';
+
+export const purchaseNftAccess = async(tokenId) =>{
     try{
-        if(!window.ethereum){
-            console.log("No metamask installed");
-        }
-
-        await window.ethereum.request({ method: "eth_requestAccounts" });
-      
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = await provider.getSigner();
-        const contractAddress = "0x2530d9e3f71CE2C4A207D472AE04B2da258B16c5";
-        const contract = new ethers.Contract(contractAddress, contractAbi.abi, signer);
-
-        const tx = await contract.setContentPrice(contentId,ethers.utils.formatEther(contentPrice));
-        console.log("Content price set");
-    }catch(error){
-        console.log("Content price set failed",error);
-    }
-} 
-
-export const buyContent = async (ownerAddress,contentId,price) => {
-     try{
-        if(!window.ethereum){
-            console.log("No metamask installed");
-        }
+        const contract = new ethers.Contract(contractAddress,contractAbi.abi,signer);
         
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = await provider.getSigner();
-        const contractAddress = "0x2530d9e3f71CE2C4A207D472AE04B2da258B16c5";
-        const contract = new ethers.Contract(contractAddress, contractAbi.abi, signer);
+        const purchase = await contract.purchaseNFT(tokenId);
+        await purchase.wait();
+        console.log('Access Granted');
 
-        const tx = await contract.buyContent(ownerAddress,contentId,{value : ethers.utils.formatEther(price)});
-        await tx.wait();
-     }catch(error){
-        console.log("Content buy failed",error);
-     }
-}
-
-export const fetchContentPrice = async(owner,contentId) =>{
-   try{
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    //const signer = await provider.getSigner();
-    const contractAddress = "0x2530d9e3f71CE2C4A207D472AE04B2da258B16c5";
-    const contract = new ethers.Contract(contractAddress, contractAbi.abi, provider);
-
-    const contentPrice = await contract.getContentPrice(owner,contentId);
-    console.log("price fetched");
-    return contentPrice;
-   }catch(error){
-     console.log("Price fetch failed",error);
-   }
-}
-
-export const fetchContentAccess = async (owner) =>{
-    try{
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-    //const signer = await provider.getSigner();
-        const contractAddress = "0x2530d9e3f71CE2C4A207D472AE04B2da258B16c5";
-        const contract = new ethers.Contract(contractAddress, contractAbi.abi, provider);
-        const contentAccess = await contract.getContentAccess(owner);
-        console.log("content access fetched");
-        return contentAccess;
     }catch(error){
-        console.log("Content access fetch failed",error);
+        console.log('Error Purchasing content',error);
     }
 }
 
-export const fetchContentId = async (owner) =>{
-    try{
+export const checkContentAccess = async(tokenId,userAddress) =>{
+    try {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
-        //const signer = await provider.getSigner();
-            const contractAddress = "0x2530d9e3f71CE2C4A207D472AE04B2da258B16c5";
-            const contract = new ethers.Contract(contractAddress, contractAbi.abi, provider);
+        const signer = await provider.getSigner();
+        const contract = new ethers.Contract(contractAddress,contractAbi.abi,signer);
 
-            const contentId = await contract.getContentId(owner);
-            console.log("content id fetched");
-            return contentId;
-    }catch(error){
-        console.log("Content id fetch failed",error);
+        const checkAccess = await contract.checkAccess(tokenId,userAddress);
+        return checkAccess;
+        console.log('Access check successful');
+    } catch (error) {
+        console.log('Access check failed',error);
     }
 }

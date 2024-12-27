@@ -10,33 +10,24 @@ pragma solidity ^0.8.20;
 
 import {ERC721URIStorage,ERC721} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {Content} from './Content.sol';
 
 contract Nft is ERC721URIStorage,Ownable{
     
-    Content public contentContract;
-    
      //nft data structure
-    struct NftData {
+    struct NFT{
         uint256 tokenId;
-        string name;
-        string description;
-        string image;
         address creator;
+        string tokenURI;
+        uint256 price;
+        bool isOneTimeSale;
+        mapping(address => bool) hasAccess; // Track who has access
     }
 
-    NftData[] public nftFeed; // Store all NFTs in a global feed
+    NFT[] public nftFeed; // Store all NFTs in a global feed
 
-   struct NFT{
-     uint256 tokenId;
-   }
+    mapping(uint256 => NFT) public nfts;
 
-    mapping(address => uint256) private _nftsMinted;
-    mapping(address => uint256) private _nftsOwned;
-    mapping (address => mapping (uint256 => NFT)) private tokenOfOwnerByIndexMapping;
-
-   constructor(string memory name, string memory symbol,address initialOwner,address contentContractAddress,address priceFeed) ERC721(name,symbol) Ownable(initialOwner){
-    contentContract = new Content(priceFeed,contentContractAddress);
+   constructor(string memory name, string memory symbol,address initialOwner) ERC721(name,symbol) Ownable(initialOwner){
    }
 
    /**
@@ -44,48 +35,36 @@ contract Nft is ERC721URIStorage,Ownable{
     */
 
    //mint function
-   function mint(address _to,uint256 tokenId,string calldata _uri) external{
+   function mint(address _to,uint256 tokenId,string calldata _uri,uint256 price, bool isOneTimeSale) external{
      _mint(_to,tokenId);
      _setTokenURI(tokenId,_uri);
-      
-      for(uint i = 0;i < balanceOf(msg.sender);i++){
-            tokenOfOwnerByIndexMapping[_to][i] = NFT({
-                tokenId : tokenId
-            });
-        }
-      // Track NFTs minted
-        _nftsMinted[_to] += 1;
-        // Track NFTs owned
-        _nftsOwned[_to] += 1;
 
-         NftData memory newNft = NftData(tokenId, "Name", "Description", "ImageHash", msg.sender);
-        nftFeed.push(newNft);
+        NFT storage newNFT = nfts[tokenId];
+
+        newNFT.tokenId = tokenId;
+        newNFT.creator = msg.sender;
+        newNFT.tokenURI = _uri;
+        newNFT.price = price;
+        newNFT.isOneTimeSale = isOneTimeSale;
    }
+
+   function purchaseNFT(uint256 tokenId) public payable {
+        NFT storage nft = nfts[tokenId];
+        require(msg.value >= nft.price, "Insufficient funds");
+        require(!nft.hasAccess[msg.sender], "Already purchased");
+        nft.hasAccess[msg.sender] = true; // Grant access to the buyer
+        // Transfer funds to the creator
+        payable(nft.creator).transfer(msg.value);
+    }
+
+    function checkAccess(uint256 tokenId, address user) public view returns (bool) {
+        return nfts[tokenId].hasAccess[user];
+    }
 
 
      /** Getter Functions */
-
-    // Get the number of NFTs minted by an address
-    function nftsMinted(address owner) external view returns (uint256) {
-        return _nftsMinted[owner];
-    }
-
-    // Get the number of NFTs owned by an address
-    function nftsOwned(address owner) external view returns (uint256) {
-        return _nftsOwned[owner];
-    }
-
-    function tokenOfOwnerByIndex(address _owner,uint256 _index) public view returns (uint256){
-        return tokenOfOwnerByIndexMapping[_owner][_index].tokenId;
-    }
-
      // Get the entire feed
-    function getNftFeed() public view returns (NftData[] memory) {
-        return nftFeed;
-    }
 
     //get Price of nft
-    function getNftPrice(uint256 tokenId, address owner) external view returns (uint256) {
-        return contentContract.getContentPrice(owner, tokenId);
-    } 
+    
 }

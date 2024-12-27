@@ -15,7 +15,7 @@
   
   .nft-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
     padding: 10px 20px;
   }
@@ -101,4 +101,8 @@
       font-size: 0.9em;
     }
   }
-  
+.eth{
+  color: rgb(63, 11, 112);
+  font-size: 25px;
+  padding-top: 0.5rem;
+}  
