@@ -20,10 +20,10 @@ export const MintNft = () => {
   const [userAddress, setUserAddress] = useState(null); // User's Ethereum address
   const [globalFeedHash, setGlobalFeedHash] = useState(null); // Global NFT feed IPFS hash
   const { address, isConnected } = useAppKitAccount()
-  const { walletProvider } = useAppKitProvider()
   const [contentId,setContentId] = useState("")
   const [price , setPrice] = useState(0);
   const [isOneTimePurchase, setIsOneTimePurchase] = useState(false);
+  const { walletProvider } = useAppKitProvider('eip155')
 
 
   const { REACT_APP_PINATA_API_KEY, REACT_APP_PINATA_API_SECRET } = process.env;
@@ -242,13 +242,14 @@ export const MintNft = () => {
       await window.ethereum.request({ method: 'eth_requestAccounts' });
       const status = document.getElementById("status");
 
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = new ethers.providers.Web3Provider(walletProvider);
       const signer = await provider.getSigner();
-      const contractAddress = '0x131AB0F6A747Fa32B7e7c149FBBAA73203Bdb1b6'; 
+      const contractAddress = '0x874D191AB8b4d3cd5FF3b23d63C551a1B2feb311'; 
       const nftContract = new ethers.Contract(contractAddress, nftArtifact.abi, signer);
 
       try {
-      const tx = await nftContract.mint(address, tokenId, tokenURI,price,isOneTimePurchase);
+      const priceInWei = ethers.utils.parseEther(price.toString());
+      const tx = await nftContract.mint(address, tokenId, tokenURI,priceInWei,isOneTimePurchase);
       status.textContent = "Transaction submitted. Waiting for confirmation...";
       await tx.wait();
       status.textContent = "Transaction confirmed!";
@@ -292,7 +293,7 @@ export const MintNft = () => {
         <input type="text" onChange={(e) => setName(e.target.value)} placeholder="name" required value={name} />
         <input type="text" onChange={(e) => setDesc(e.target.value)} placeholder="description" required value={desc} /><br/>
         <label htmlFor='price' className='price'>Price (Leave Zero if you want content to be free -- earn on views, let your fans enjoy your porn)</label>
-        <input type="number" onChange={(e) => setPrice(e.target.value)} placeholder="Price in ETH" required value={price} />
+        <input type="number" step="any" onChange={(e) => setPrice(e.target.value)} placeholder="Price in ETH" required value={price} />
         <input type="checkbox" onChange={(e) => setIsOneTimePurchase(e.target.checked)} /><span className='purchase'>One-Time Purchase</span> 
         <br /><br />
         <button className="form_button" type="submit">upload</button>

@@ -2,12 +2,12 @@ import { React, useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import "../App.css";
 import { useAppKitProvider, useAppKitAccount } from "@reown/appkit/react";
-import { ethers, Contract, formatUnits } from 'ethers'
+import { ethers, Contract} from 'ethers'
 import { createAppKit } from '@reown/appkit/react'
 import rewardAbi from '../contracts/RewardToken.sol/RewardToken.json'
 import { WagmiProvider } from 'wagmi'
 import { arbitrum, mainnet,base, scroll, polygonAmoy, polygon,sepolia } from '@reown/appkit/networks'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClient } from '@tanstack/react-query'
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import Avatar from 'react-avatar';
 import contractAbi from '../contracts/Subscription.sol/Subscription.json';
@@ -49,20 +49,10 @@ createAppKit({
 
 
 export default function Navigation() {
-    const [isNetworkSwitchHighlighted, setIsNetworkSwitchHighlighted] =
-    useState(false);
-    const [isConnectHighlighted, setIsConnectHighlighted] = useState(false);
-
-    const closeAll = () => {
-    setIsNetworkSwitchHighlighted(false);
-    setIsConnectHighlighted(false);
-  };
-    
     const { address, isConnected } = useAppKitAccount()
-    const { walletProvider } = useAppKitProvider()
     const [rewardedToday , setRewardedToday ] = useState(false);
     const [rewardBalance, setRewardBalance] = useState(0);
-    const [isCreator,setCreator] = useState(true);
+    const [isCreator,setCreator] = useState();
     console.log(address);
 
     const contractAddress = '0x9A4Ad6624Dc4Bc95932bc9ca813e257C48eA88aD';

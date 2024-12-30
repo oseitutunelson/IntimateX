@@ -20,11 +20,14 @@ contract Nft is ERC721URIStorage,Ownable{
         string tokenURI;
         uint256 price;
         bool isOneTimeSale;
-        mapping(address => bool) hasAccess; // Track who has access
     }
 
-    NFT[] public nftFeed; // Store all NFTs in a global feed
 
+ // Store all NFTs in a global feed
+    uint256 [] public nftFeed;
+     // Track who has access
+     // Store access control: tokenId => user => access status
+    mapping(uint256 => mapping(address => bool)) public hasAccess; 
     mapping(uint256 => NFT) public nfts;
 
    constructor(string memory name, string memory symbol,address initialOwner) ERC721(name,symbol) Ownable(initialOwner){
@@ -46,25 +49,33 @@ contract Nft is ERC721URIStorage,Ownable{
         newNFT.tokenURI = _uri;
         newNFT.price = price;
         newNFT.isOneTimeSale = isOneTimeSale;
+
+         // Add to the global feed
+        nftFeed.push(tokenId);
    }
 
    function purchaseNFT(uint256 tokenId) public payable {
         NFT storage nft = nfts[tokenId];
         require(msg.value >= nft.price, "Insufficient funds");
-        require(!nft.hasAccess[msg.sender], "Already purchased");
-        nft.hasAccess[msg.sender] = true; // Grant access to the buyer
+        require(!hasAccess[tokenId][msg.sender], "Already purchased");
+        hasAccess[tokenId][msg.sender] = true; // Grant access to the buyer
         // Transfer funds to the creator
         payable(nft.creator).transfer(msg.value);
     }
 
     function checkAccess(uint256 tokenId, address user) public view returns (bool) {
-        return nfts[tokenId].hasAccess[user];
+        return hasAccess[tokenId][user];
     }
 
 
      /** Getter Functions */
-     // Get the entire feed
+     /**
+     * @dev Get the entire feed of NFTs
+     */
+    function getNftFeed() public view returns (uint256[] memory) {
+        return nftFeed;
+    }
 
-    //get Price of nft
+    
     
 }
