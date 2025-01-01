@@ -2,6 +2,8 @@ import {React} from "react";
 import contractAbi from "../contracts/UserNftData.sol/UserNFTData.json";
 import { ethers } from "ethers";
 
+const contractAddress = "0x1F1906eD0dE6F5cC5E883c45d29B86993D610c94";
+
 export const updateHashOnBlockchain = async (userNftHash) => {
    try{
     if(!window.ethereum){
@@ -14,7 +16,6 @@ export const updateHashOnBlockchain = async (userNftHash) => {
    // Set up the provider and signer
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = await provider.getSigner();
-      const contractAddress = "0x3B850C42cf1309a1f7E7d6FD4d6a23f2aBf2b679";
       const contract = new ethers.Contract(contractAddress,contractAbi.abi,signer);
 
       const tx = contract.updateUserNftHash(userNftHash);
@@ -29,7 +30,6 @@ export const fetchHashFromBlockchain = async (userAddress) =>{
     try {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = await provider.getSigner();
-        const contractAddress = "0x3B850C42cf1309a1f7E7d6FD4d6a23f2aBf2b679"; 
         const contract = new ethers.Contract(contractAddress, contractAbi.abi, provider);
     
         const userHash = await contract.getUserNftHash(userAddress);
@@ -47,7 +47,6 @@ export const fetchGlobalNftHash = async () =>{
 }
 
        const provider = new ethers.providers.Web3Provider(window.ethereum);
-       const contractAddress = "0x3B850C42cf1309a1f7E7d6FD4d6a23f2aBf2b679"; 
        const contract = new ethers.Contract(contractAddress, contractAbi.abi, provider);
 
     try {

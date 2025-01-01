@@ -11,9 +11,11 @@ import { fetchViewData } from "./videoviews";
 import { FaEthereum } from "react-icons/fa";
 import contractAbi from "../contracts/NFT.sol/Nft.json";
 import { useAppKitProvider, useAppKitAccount } from "@reown/appkit/react";
+import subscribeContract from '../contracts/Subscription.sol/Subscription.json';
 
 
-const contractAddress = "0x874D191AB8b4d3cd5FF3b23d63C551a1B2feb311";
+const contractAddress = "0x495699E54c02762aAf6B5e6D400C348D6d2e07C9";
+const subscribeAddress = "0x759C52837dD5EF03C32a0A733f593DcC74dfab6c";
 
 const NftFeed = () => {
   const [nftFeed, setNftFeed] = useState([]);
@@ -21,6 +23,7 @@ const NftFeed = () => {
   const [nft, setNft] = useState("");
   const [views, setViews] = useState("");
   const { address, isConnected } = useAppKitAccount()
+  const [isCreator,setCreator] = useState(false);
 
   // Fetch global NFT feed from IPFS
   const fetchNftFeed = async () => {
@@ -73,7 +76,6 @@ const NftFeed = () => {
     }
   };
    // Check access for each NFT
-
    const checkAccessForAllNfts = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
@@ -134,6 +136,31 @@ const NftFeed = () => {
     }
   };
 
+  //get subscriber ** creator
+  const getSubscriptionStatus = async() =>{
+    try{
+      if(!window.ethereum){
+        console.log("No wallet connected");
+      }
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = await provider.getSigner();
+      const contract = new ethers.Contract(subscribeAddress,subscribeContract.abi,signer);
+
+      const creatorStatus = await contract.getSubscriber(address);
+      console.log(creatorStatus);
+      setCreator(creatorStatus);
+      return creatorStatus;
+    }catch(error){
+      console.log('User is not a creator',error);
+    }
+    
+  }
+
+  useEffect(() =>{
+    getSubscriptionStatus();
+  })
+
   useEffect(() => {
     const loadFeedAndCheckAccess = async () => {
       try {
@@ -189,9 +216,16 @@ const NftFeed = () => {
       <div className="feed_container">
         <div className="subscriber">
           <h2>Feed</h2>
-          <Link to="/subscribe">
+          {
+            isCreator === true ? (
+              <Link to={`/creator/${address}`}><button>Creator Dashboard</button></Link>
+            ) : (
+               <Link to="/subscribe">
             <button>Become a creator</button>
           </Link>
+            )
+          }
+         
         </div>
 
         <div className="nft-cards">

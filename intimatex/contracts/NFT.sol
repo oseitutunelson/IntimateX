@@ -63,9 +63,6 @@ contract Nft is ERC721URIStorage,Ownable{
         payable(nft.creator).transfer(msg.value);
     }
 
-    function checkAccess(uint256 tokenId, address user) public view returns (bool) {
-        return hasAccess[tokenId][user];
-    }
 
 
      /** Getter Functions */
