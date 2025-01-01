@@ -109,3 +109,41 @@
   font-size: 25px;
   padding-top: 0.5rem;
 }  
+
+.pagination {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.pagination button {
+  color: #007BFF;
+  padding: 8px 16px;
+  text-decoration: none;
+  border: 1px solid #007BFF;
+  margin: 0 5px;
+  border-radius: 4px;
+  background-color: #000;
+  cursor: pointer;
+}
+
+.pagination button:hover {
+  background-color: #007BFF;
+  color: white;
+}
+
+.pagination .active {
+  background-color: #007BFF;
+  color: white;
+}
+#page-numbers {
+  margin-top: 20px;
+  font-size: 16px;
+}
+.buy_button{
+  color: #fff;
+  cursor: pointer;
+  background-color: blueviolet;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+}

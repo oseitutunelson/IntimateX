@@ -51,3 +51,16 @@
     gap: 1rem;
   }
 }
+.earnings{
+  margin-left: auto;
+  padding: 0.5rem 5rem;
+}
+.earnings h4{
+  color: #555;
+}
+.earnings h2{
+  color: #fff;
+}
+.mint_nft{
+  display: flex;
+}

@@ -27,7 +27,23 @@ export const MintNft = () => {
 
 
   const { REACT_APP_PINATA_API_KEY, REACT_APP_PINATA_API_SECRET } = process.env;
+   
+  //shuffle array
+  const shuffleArray = (array) => {
+    let currentIndex = array.length;
 
+  // While there remain elements to shuffle...
+    while (currentIndex != 0) {
+
+    // Pick a remaining element...
+    let randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+  }
    // Fetch the global NFT feed from IPFS
    const fetchGlobalFeedFromIPFS = async () => {
     const globalFeedHash = await fetchGlobalNftHash();
@@ -63,6 +79,7 @@ export const MintNft = () => {
 
       // Add the new NFT data to the feed
       globalNftFeed.push(newNftData);
+      shuffleArray(globalNftFeed);
 
       // Upload the updated feed to IPFS
       const res = await axios({
@@ -244,7 +261,7 @@ export const MintNft = () => {
 
       const provider = new ethers.providers.Web3Provider(walletProvider);
       const signer = await provider.getSigner();
-      const contractAddress = '0x874D191AB8b4d3cd5FF3b23d63C551a1B2feb311'; 
+      const contractAddress = '0xb25C625657B05BD4d5230765d59811AEFf103D87'; 
       const nftContract = new ethers.Contract(contractAddress, nftArtifact.abi, signer);
 
       try {

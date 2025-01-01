@@ -65,7 +65,7 @@ const fetchUserContentFromIPFS = async () => {
          </div>
          <div className='profile_info'>
            <h3>Username</h3>
-           <p>description bbweub bfjbeufbuwef fbweugew bfuewu</p>
+           <p>Description</p>
          </div>
            </>
           ) : (

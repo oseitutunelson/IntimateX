@@ -91,7 +91,7 @@ useEffect(() => {
           <div className='profile_edit'>
            <Link to={`/editProfile/${address}`}> <button>Edit Profile</button></Link>
           </div>
-          
+         
         </div>
         
     )

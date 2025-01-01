@@ -14,7 +14,7 @@ import { useAppKitProvider, useAppKitAccount } from "@reown/appkit/react";
 import subscribeContract from '../contracts/Subscription.sol/Subscription.json';
 
 
-const contractAddress = "0x495699E54c02762aAf6B5e6D400C348D6d2e07C9";
+const contractAddress = "0xb25C625657B05BD4d5230765d59811AEFf103D87";
 const subscribeAddress = "0x759C52837dD5EF03C32a0A733f593DcC74dfab6c";
 
 const NftFeed = () => {
@@ -157,6 +157,36 @@ const NftFeed = () => {
     
   }
 
+  /**
+   * @dev Pagination for page
+   */
+  const cardsPerPage = 20; // Number of cards per page
+  const [currentPage, setCurrentPage] = useState(1); // State for current page
+
+  // Calculate total pages
+  const totalPages = Math.ceil(nftFeed.length / cardsPerPage);
+
+  // Get the NFTs to display for the current page
+  const paginatedFeed = nftFeed.slice(
+    (currentPage - 1) * cardsPerPage,
+    currentPage * cardsPerPage
+  );
+
+  // Event handlers for pagination
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const handlePrev = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const handlePageClick = (page) => {
+    setCurrentPage(page);
+  };
+
+
+
   useEffect(() =>{
     getSubscriptionStatus();
   })
@@ -167,6 +197,7 @@ const NftFeed = () => {
         // Step 1: Fetch the NFT feed
         const globalFeedHash = await fetchGlobalNftHash();
         if (!globalFeedHash) return;
+        console.log(globalFeedHash)
   
         const response = await axios.get(
           `https://gateway.pinata.cloud/ipfs/${globalFeedHash}`
@@ -213,7 +244,7 @@ const NftFeed = () => {
   return (
     <div className="nft-feed">
       <Navigation />
-      <div className="feed_container">
+      <div className="feed_container" id="feedContainer">
         <div className="subscriber">
           <h2>Feed</h2>
           {
@@ -244,6 +275,7 @@ const NftFeed = () => {
                       className="video"
                       onMouseOver={(event) => event.target.play()}
                       onMouseOut={(event) => event.target.pause()}
+                      poster={`https://emerald-fancy-gerbil-824.mypinata.cloud/ipfs/${nft.ImgHash}-thumbnail.jpg`}
                       onTimeUpdate={(event) => handleTimeUpdate(event, nft)}
                     >
                       <source
@@ -293,6 +325,35 @@ const NftFeed = () => {
             ))
           )}
         </div>
+      </div>
+      {/* Pagination Controls */}
+      <div className="pagination" id="pagination">
+        <button
+          id="prev"
+          disabled={currentPage === 1}
+          onClick={handlePrev}
+        >
+          Previous
+        </button>
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index + 1}
+            className={`page-link ${currentPage === index + 1 ? 'active' : ''}`}
+            onClick={() => handlePageClick(index + 1)}
+          >
+            {index + 1}
+          </button>
+        ))}
+        <button
+          id="next"
+          disabled={currentPage === totalPages}
+          onClick={handleNext}
+        >
+          Next
+        </button>
+        <p id="page-numbers">
+          Page {currentPage} of {totalPages}
+        </p>
       </div>
     </div>
   );

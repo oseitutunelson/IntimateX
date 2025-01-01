@@ -29,6 +29,8 @@ contract Nft is ERC721URIStorage,Ownable{
      // Store access control: tokenId => user => access status
     mapping(uint256 => mapping(address => bool)) public hasAccess; 
     mapping(uint256 => NFT) public nfts;
+    mapping(address => uint256) public addressToEarnings;
+
 
    constructor(string memory name, string memory symbol,address initialOwner) ERC721(name,symbol) Ownable(initialOwner){
    }
@@ -61,9 +63,13 @@ contract Nft is ERC721URIStorage,Ownable{
         hasAccess[tokenId][msg.sender] = true; // Grant access to the buyer
         // Transfer funds to the creator
         payable(nft.creator).transfer(msg.value);
+        addressToEarnings[nft.creator] = msg.value;
     }
 
 
+     function checkAccess(uint256 tokenId, address user) public view returns (bool) {
+        return hasAccess[tokenId][user];
+    }
 
      /** Getter Functions */
      /**
@@ -73,6 +79,9 @@ contract Nft is ERC721URIStorage,Ownable{
         return nftFeed;
     }
 
+    function getCreatorEarnings(address creator) public view returns (uint256){
+        return addressToEarnings[creator];
+    }
     
     
 }
