@@ -261,7 +261,7 @@ export const MintNft = () => {
 
       const provider = new ethers.providers.Web3Provider(walletProvider);
       const signer = await provider.getSigner();
-      const contractAddress = '0xb25C625657B05BD4d5230765d59811AEFf103D87'; 
+      const contractAddress = '0xEA4d0dd4f6B5a8cDdD98e1a871c25Af025F69690'; 
       const nftContract = new ethers.Contract(contractAddress, nftArtifact.abi, signer);
 
       try {
@@ -311,7 +311,6 @@ export const MintNft = () => {
         <input type="text" onChange={(e) => setDesc(e.target.value)} placeholder="description" required value={desc} /><br/>
         <label htmlFor='price' className='price'>Price (Leave Zero if you want content to be free -- earn on views, let your fans enjoy your porn)</label>
         <input type="number" step="any" onChange={(e) => setPrice(e.target.value)} placeholder="Price in ETH" required value={price} />
-        <input type="checkbox" onChange={(e) => setIsOneTimePurchase(e.target.checked)} /><span className='purchase'>One-Time Purchase</span> 
         <br /><br />
         <button className="form_button" type="submit">upload</button>
         <p id="status"></p>

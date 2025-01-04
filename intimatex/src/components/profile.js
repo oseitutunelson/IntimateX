@@ -6,6 +6,13 @@ import Navigation from "./Navigation";
 import { fetchUserProfileHash } from "./updateProfile";
 import { fetchHashFromBlockchain } from "./updateHashOnBlockchain";
 import { Link } from "react-router-dom";
+import truncateEthAddress from "truncate-eth-address";
+import { FaEthereum } from "react-icons/fa";
+import contractAbi from "../contracts/NFT.sol/Nft.json";
+import { ethers } from "ethers";
+
+const contractAddress = "0xEA4d0dd4f6B5a8cDdD98e1a871c25Af025F69690";
+
 
 export default function Profile(){
    const {walletAddress} = useParams();
@@ -39,6 +46,146 @@ const fetchUserContentFromIPFS = async () => {
         console.log("Error fetching user's NFTs from IPFS:", error);
     }
 };
+
+  // check nft access
+  const checkAccess = async (nft) => {
+    const { tokenId } = nft;
+
+    if (!window.ethereum) {
+      alert("MetaMask is not installed!");
+      return false;
+    }
+
+    await window.ethereum.request({ method: "eth_requestAccounts" });
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = await provider.getSigner();
+    const nftContract = new ethers.Contract(
+      contractAddress,
+      contractAbi.abi,
+      signer
+    );
+
+    try {
+      const hasAccess = await nftContract.checkAccess(
+        tokenId,
+        await signer.getAddress()
+      );
+      return hasAccess;
+    } catch (error) {
+      console.error("Error checking access:", error);
+      return false;
+    }
+  };
+   // Check access for each NFT
+   const checkAccessForAllNfts = async () => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const nftContract = new ethers.Contract(contractAddress, contractAbi.abi, signer);
+  
+    const updatedNftFeed = await Promise.all(
+      nftArray.map(async (nft) => {
+        const hasAccess = await nftContract.checkAccess(nft.tokenId, signer.getAddress());
+        return { ...nft, hasAccess };
+      })
+    );
+  
+    setNftArray(updatedNftFeed); // Update feed with access status
+  };
+  
+  
+  
+  //purchase nft access
+  const purchaseAccess = async (nft) => {
+    const { tokenId, price } = nft;
+
+    if (!window.ethereum) {
+      alert("MetaMask is not installed!");
+      return;
+    }
+
+    await window.ethereum.request({ method: "eth_requestAccounts" });
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = await provider.getSigner();
+    const nftContract = new ethers.Contract(
+      contractAddress,
+      contractAbi.abi,
+      signer
+    );
+
+    try {
+      const tx = await nftContract.purchaseNFT(tokenId, {
+        value: ethers.utils.parseEther(price.toString()),
+      });
+      await tx.wait();
+      alert("Purchase successful! You now have access to this content.");
+
+     
+
+      // Check access after purchase
+      const hasAccess = await checkAccess(nft);
+      if (hasAccess) {
+        // Update state to reflect access
+        setNftArray((prevFeed) =>
+          prevFeed.map((item) =>
+            item.tokenId === tokenId ? { ...item, hasAccess: true } : item
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error purchasing NFT access:", error);
+      alert("Transaction failed. Please try again.");
+    }
+  };
+
+  useEffect(() => {
+    const loadFeedAndCheckAccess = async () => {
+      try {
+        // Step 1: Fetch the NFT feed
+        const globalFeedHash = await fetchHashFromBlockchain(walletAddress);
+        if (!globalFeedHash) return;
+        console.log(globalFeedHash)
+  
+        const response = await axios.get(
+          `https://gateway.pinata.cloud/ipfs/${globalFeedHash}`
+        );
+        const fetchedFeed = response.data;
+  
+        // Step 2: Check access for each NFT
+        if (window.ethereum) {
+          await window.ethereum.request({ method: "eth_requestAccounts" });
+  
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          const signer = provider.getSigner();
+          const nftContract = new ethers.Contract(
+            contractAddress,
+            contractAbi.abi,
+            signer
+          );
+  
+          const updatedFeed = await Promise.all(
+            fetchedFeed.map(async (nft) => {
+              const hasAccess = await nftContract.checkAccess(
+                nft.tokenId,
+                await signer.getAddress()
+              );
+              return { ...nft, hasAccess }; // Add access status to the NFT object
+            })
+          );
+  
+          // Update the state with the updated feed
+          setNftArray(updatedFeed);
+        } else {
+          alert("MetaMask is not installed!");
+          setNftArray(fetchedFeed); // Set the feed without access checks
+        }
+      } catch (error) {
+        console.error("Error loading feed or checking access:", error);
+      }
+    };
+  
+    loadFeedAndCheckAccess(); // Call the function inside useEffect
+  }, []); // Empty dependency array ensures it runs once on component mount
+  
 
 
 
@@ -93,28 +240,68 @@ const fetchUserContentFromIPFS = async () => {
         <div className='content'>
             <h3 className="content_title">Posts</h3>
             <div className="nft-container">
-                {nftArray.length === 0 ? (
-                    <p>No Content uploaded.</p>
+            {nftArray.length === 0 ? (
+            <p>No posts yet.</p>
+          ) : (
+            nftArray.map((nft, index) => (
+              <div key={index} className="nft-card">
+                {nft.price === 0 || nft.hasAccess  ? (
+                  <Link
+                    to={`/nft/${nft.ImgHash}`}
+                    state={{ nft }}
+                    className="link_nft"
+                  >
+                    <video
+                      className="video"
+                      onMouseOver={(event) => event.target.play()}
+                      onMouseOut={(event) => event.target.pause()}
+                      poster={`https://emerald-fancy-gerbil-824.mypinata.cloud/ipfs/${nft.ImgHash}-thumbnail.jpg`}
+                    >
+                      <source
+                        src={`https://emerald-fancy-gerbil-824.mypinata.cloud/ipfs/${nft.ImgHash}`}
+                        type="video/mp4"
+                      />
+                    </video>
+                    <Link to={`/profile/${nft.creator}`} className="link_nft2">
+                      {" "}
+                      <h4>{truncateEthAddress(`${nft.creator}`)}</h4>
+                    </Link>
+                    <h3>{nft.name}</h3>
+                    <p>{nft.desc}</p>
+                    <p>Price : Free Access</p>
+                  </Link>
                 ) : (
-                    nftArray.map((nft, index) => (
-                        <div key={index} className="nft-item item">
-                             <Link 
-    to={`/nft/${nft.ImgHash}`} 
-    state={{ nft }} 
-    className="link_nft"
-  >
-                            <video width='500px' height='400px' 
-                            onMouseOver={event => event.target.play()}
-                            onMouseOut={event => event.target.pause()}
-                            >
-                    <source src={`https://emerald-fancy-gerbil-824.mypinata.cloud/ipfs/${nft.ImgHash}`} type="video/mp4" />
-                </video>
-                            <h3>{nft.name}</h3>
-                            <p>{nft.desc}</p>
-                            </Link>
-                        </div>
-                    ))
+                  <div>
+                   
+                      <div className="link_nft l_nft">
+                         <video
+                        className="video"
+                      >
+                        <source
+                          src={`https://emerald-fancy-gerbil-824.mypinata.cloud/ipfs/${nft.ImgHash}`}
+                          type="video/mp4"
+                        />
+                      </video>
+                      </div>
+                     
+                      <Link
+                        to={`/profile/${nft.creator}`}
+                        className="link_nft2"
+                      >
+                        {" "}
+                        <h4>{truncateEthAddress(`${nft.creator}`)}</h4> 
+                        </Link>
+                      <h3>{nft.name}</h3>
+                      <p>{nft.desc}</p>
+                      <p>
+                        Price : {nft.price} ETH <FaEthereum className="eth" />
+                      </p>
+                      <button className='buy_button' onClick={() => purchaseAccess(nft)}>Buy Access</button>
+                  </div>
                 )}
+              </div>
+            ))
+          )}
             </div>
         </div>
     </div>

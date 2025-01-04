@@ -14,7 +14,7 @@ import { useAppKitProvider, useAppKitAccount } from "@reown/appkit/react";
 import subscribeContract from '../contracts/Subscription.sol/Subscription.json';
 
 
-const contractAddress = "0xb25C625657B05BD4d5230765d59811AEFf103D87";
+const contractAddress = "0xEA4d0dd4f6B5a8cDdD98e1a871c25Af025F69690";
 const subscribeAddress = "0x759C52837dD5EF03C32a0A733f593DcC74dfab6c";
 
 const NftFeed = () => {

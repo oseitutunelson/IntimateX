@@ -19,7 +19,6 @@ contract Nft is ERC721URIStorage,Ownable{
         address creator;
         string tokenURI;
         uint256 price;
-        bool isOneTimeSale;
     }
 
 
@@ -31,7 +30,6 @@ contract Nft is ERC721URIStorage,Ownable{
     mapping(uint256 => NFT) public nfts;
     mapping(address => uint256) public addressToEarnings;
 
-
    constructor(string memory name, string memory symbol,address initialOwner) ERC721(name,symbol) Ownable(initialOwner){
    }
 
@@ -40,7 +38,7 @@ contract Nft is ERC721URIStorage,Ownable{
     */
 
    //mint function
-   function mint(address _to,uint256 tokenId,string calldata _uri,uint256 price, bool isOneTimeSale) external{
+   function mint(address _to,uint256 tokenId,string calldata _uri,uint256 price) external{
      _mint(_to,tokenId);
      _setTokenURI(tokenId,_uri);
 
@@ -50,7 +48,6 @@ contract Nft is ERC721URIStorage,Ownable{
         newNFT.creator = msg.sender;
         newNFT.tokenURI = _uri;
         newNFT.price = price;
-        newNFT.isOneTimeSale = isOneTimeSale;
 
          // Add to the global feed
         nftFeed.push(tokenId);
@@ -63,11 +60,10 @@ contract Nft is ERC721URIStorage,Ownable{
         hasAccess[tokenId][msg.sender] = true; // Grant access to the buyer
         // Transfer funds to the creator
         payable(nft.creator).transfer(msg.value);
-        addressToEarnings[nft.creator] = msg.value;
+        addressToEarnings[nft.creator] += msg.value;
     }
 
-
-     function checkAccess(uint256 tokenId, address user) public view returns (bool) {
+    function checkAccess(uint256 tokenId, address user) public view returns (bool) {
         return hasAccess[tokenId][user];
     }
 
@@ -82,6 +78,7 @@ contract Nft is ERC721URIStorage,Ownable{
     function getCreatorEarnings(address creator) public view returns (uint256){
         return addressToEarnings[creator];
     }
+
     
     
 }

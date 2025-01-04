@@ -4,12 +4,16 @@ import { ethers } from 'ethers';
 import '../styles/mint.css';
 import { fetchHashFromBlockchain } from './updateHashOnBlockchain';
 import { useAppKitProvider, useAppKitAccount } from "@reown/appkit/react";
+import contractAbi from '../contracts/NFT.sol/Nft.json';
+
 
 
 export const UserNfts = () => {
     const { address, isConnected } = useAppKitAccount()
     const [nftArray, setNftArray] = useState([]);
     const savedNftHash = localStorage.getItem('userNftHash');
+    const [creatorEarnings,setCreatorEarnings] = useState(0)
+
 
     const { REACT_APP_PINATA_API_KEY, REACT_APP_PINATA_API_SECRET } = process.env;
 
@@ -29,15 +33,18 @@ export const UserNfts = () => {
         }
     };
 
+  
+
     // Call the function to load the user's NFTs when the component is mounted
     useEffect(() => {
     fetchUserNftsFromIPFS();
-        
+ 
     }, [savedNftHash]);
 
     return (
         <div className='content'>
             <h3>Posts</h3>
+         
             <div className="nft-container">
                 {nftArray.length === 0 ? (
                     <p>No Content uploaded.</p>
