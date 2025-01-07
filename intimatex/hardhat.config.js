@@ -10,7 +10,7 @@ module.exports = {
   solidity: "0.8.27",
   networks: {
     sepolia: {
-        url: `https://eth-sepolia.g.alchemy.com/v2/WTBOkUzsPcn1JkfHsmYlHEHBu3u3AUu2`,
+        url: `https://blockchain.googleapis.com/v1/projects/constant-host-447008-r1/locations/us-central1/endpoints/ethereum-sepolia/rpc?key=AIzaSyAhm69jwGy1AFEo0UetUDbT_yU8ajh2Oak`,
         accounts: [`0x${SEPOLIA_PRIVATE_KEY}`]
      },
   //  anvil:{

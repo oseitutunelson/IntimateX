@@ -10,6 +10,8 @@ import truncateEthAddress from "truncate-eth-address";
 import { FaEthereum } from "react-icons/fa";
 import contractAbi from "../contracts/NFT.sol/Nft.json";
 import { ethers } from "ethers";
+import pLimit from 'p-limit';
+import { FaEye } from "react-icons/fa";
 
 const contractAddress = "0xEA4d0dd4f6B5a8cDdD98e1a871c25Af025F69690";
 
@@ -162,14 +164,25 @@ const fetchUserContentFromIPFS = async () => {
             signer
           );
   
+          const limit = pLimit(5);
+
           const updatedFeed = await Promise.all(
-            fetchedFeed.map(async (nft) => {
-              const hasAccess = await nftContract.checkAccess(
-                nft.tokenId,
-                await signer.getAddress()
-              );
-              return { ...nft, hasAccess }; // Add access status to the NFT object
-            })
+            fetchedFeed.map((nft) =>
+              limit(async () => {
+                try {
+                  if (!nft.ImgHash) throw new Error("Missing ImgHash for NFT");
+                  const hasAccess = await nftContract.checkAccess(
+                    nft.tokenId,
+                    await signer.getAddress()
+                  );
+                  const viewResponse = await axios.get(`http://localhost:5000/api/videos/${nft.ImgHash}`);
+                  return { ...nft, views: viewResponse.data.views ,hasAccess}; // Add views to NFT object
+                } catch (viewError) {
+                  console.error(`Error fetching views for ${nft.ImgHash}:`, viewError);
+                  return { ...nft, views: 0 }; // Default to 0 views if error occurs
+                }
+              })
+            )
           );
   
           // Update the state with the updated feed
@@ -269,6 +282,7 @@ const fetchUserContentFromIPFS = async () => {
                     <h3>{nft.name}</h3>
                     <p>{nft.desc}</p>
                     <p>Price : Free Access</p>
+                    <p><FaEye className="eye_views"/>&nbsp;{nft.views}</p>
                   </Link>
                 ) : (
                   <div>
