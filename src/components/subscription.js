@@ -16,7 +16,7 @@ export const Subscription = () =>{
         
         try{
             const status = document.getElementById("status");
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const provider = new ethers.BrowserProvider(window.ethereum);
             const signer = await provider.getSigner();
             const contract = new ethers.Contract(contractAddress,contractAbi.abi,signer);
     
@@ -46,7 +46,7 @@ export const Subscription = () =>{
     
     const getSubscriber = async (user) =>{
         try{
-           const provider = new ethers.providers.Web3Provider(window.ethereum);
+           const provider = new ethers.BrowserProvider(window.ethereum);
            const contract = new ethers.Contract(contractAddress,contractAbi.abi,provider);
     
            const subscribers = await contract.getSubscriber(user);

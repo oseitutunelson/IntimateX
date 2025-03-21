@@ -238,7 +238,7 @@ export const MintNft = () => {
       alert("MetaMask is not installed!");
       return;
     }
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const provider = new ethers.BrowserProvider(window.ethereum);
     const signer = provider.getSigner();
     return await signer.getAddress();
   };
@@ -259,13 +259,13 @@ export const MintNft = () => {
       await window.ethereum.request({ method: 'eth_requestAccounts' });
       const status = document.getElementById("status");
 
-      const provider = new ethers.providers.Web3Provider(walletProvider);
+      const provider = new ethers.BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
       const contractAddress = '0xEA4d0dd4f6B5a8cDdD98e1a871c25Af025F69690'; 
       const nftContract = new ethers.Contract(contractAddress, nftArtifact.abi, signer);
 
       try {
-      const priceInWei = ethers.utils.parseEther(price.toString());
+      const priceInWei = ethers.parseEther(price.toString());
       const tx = await nftContract.mint(address, tokenId, tokenURI,priceInWei,isOneTimePurchase);
       status.textContent = "Transaction submitted. Waiting for confirmation...";
       await tx.wait();

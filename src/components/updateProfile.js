@@ -9,7 +9,7 @@ export const updateProfileHash = async(hash) => {
         console.log("No metamask found");
     }
         const status = document.getElementById("status");
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const provider = new ethers.BrowserProvider(window.ethereum);
         const signer = await provider.getSigner();
         const contract = new ethers.Contract(contractAddress, contractAbi.abi, signer);
 
@@ -26,7 +26,7 @@ export const fetchUserProfileHash = async (address) =>{
        if(!window.ethereum){
         console.log("No wallet found");
        }
-       const provider = new ethers.providers.Web3Provider(window.ethereum);
+       const provider = new ethers.BrowserProvider(window.ethereum);
        const contract = new ethers.Contract(contractAddress,contractAbi.abi,provider);
 
        const tx = await contract.fetchUserProfileHash(address);
@@ -43,7 +43,7 @@ export const getAllProfilesHash = async() =>{
         if(!window.ethereum){
             console.log("No wallet found");
            }
-           const provider = new ethers.providers.Web3Provider(window.ethereum);
+           const provider = new ethers.BrowserProvider(window.ethereum);
            const contract = new ethers.Contract(contractAddress,contractAbi.abi,provider);
 
            const tx = await contract.getAllProfilesHash();

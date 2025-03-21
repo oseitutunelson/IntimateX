@@ -59,7 +59,7 @@ const fetchUserContentFromIPFS = async () => {
     }
 
     await window.ethereum.request({ method: "eth_requestAccounts" });
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const provider = new ethers.BrowserProvider(window.ethereum);
     const signer = await provider.getSigner();
     const nftContract = new ethers.Contract(
       contractAddress,
@@ -80,7 +80,7 @@ const fetchUserContentFromIPFS = async () => {
   };
    // Check access for each NFT
    const checkAccessForAllNfts = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const provider = new ethers.BrowserProvider(window.ethereum);
     const signer = provider.getSigner();
     const nftContract = new ethers.Contract(contractAddress, contractAbi.abi, signer);
   
@@ -106,7 +106,7 @@ const fetchUserContentFromIPFS = async () => {
     }
 
     await window.ethereum.request({ method: "eth_requestAccounts" });
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const provider = new ethers.BrowserProvider(window.ethereum);
     const signer = await provider.getSigner();
     const nftContract = new ethers.Contract(
       contractAddress,
@@ -116,7 +116,7 @@ const fetchUserContentFromIPFS = async () => {
 
     try {
       const tx = await nftContract.purchaseNFT(tokenId, {
-        value: ethers.utils.parseEther(price.toString()),
+        value: ethers.parseEther(price.toString()),
       });
       await tx.wait();
       alert("Purchase successful! You now have access to this content.");
@@ -156,7 +156,7 @@ const fetchUserContentFromIPFS = async () => {
         if (window.ethereum) {
           await window.ethereum.request({ method: "eth_requestAccounts" });
   
-          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          const provider = new ethers.BrowserProvider(window.ethereum);
           const signer = provider.getSigner();
           const nftContract = new ethers.Contract(
             contractAddress,

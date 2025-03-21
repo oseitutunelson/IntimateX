@@ -45,7 +45,7 @@ const checkAccess = async (nft) => {
   }
 
   await window.ethereum.request({ method: "eth_requestAccounts" });
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const provider = new ethers.BrowserProvider(window.ethereum);
   const signer = await provider.getSigner();
   const nftContract = new ethers.Contract(
     contractAddress,
@@ -66,7 +66,7 @@ const checkAccess = async (nft) => {
 };
  // Check access for each NFT
  const checkAccessForAllNfts = async () => {
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const provider = new ethers.BrowserProvider(window.ethereum);
   const signer = provider.getSigner();
   const nftContract = new ethers.Contract(contractAddress, contractAbi.abi, signer);
 
@@ -92,7 +92,7 @@ const purchaseAccess = async (nft) => {
   }
 
   await window.ethereum.request({ method: "eth_requestAccounts" });
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const provider = new ethers.BrowserProvider(window.ethereum);
   const signer = await provider.getSigner();
   const nftContract = new ethers.Contract(
     contractAddress,
@@ -102,7 +102,7 @@ const purchaseAccess = async (nft) => {
 
   try {
     const tx = await nftContract.purchaseNFT(tokenId, {
-      value: ethers.utils.parseEther(price.toString()),
+      value: ethers.parseEther(price.toString()),
     });
     await tx.wait();
     alert("Purchase successful! You now have access to this content.");
@@ -142,7 +142,7 @@ useEffect(() => {
       if (window.ethereum) {
         await window.ethereum.request({ method: "eth_requestAccounts" });
 
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const provider = new ethers.BrowserProvider(window.ethereum);
         const signer = provider.getSigner();
         const nftContract = new ethers.Contract(
           contractAddress,
@@ -208,8 +208,7 @@ useEffect(() => {
                   >
                     <video
                       className="video"
-                      onMouseOver={(event) => event.target.play()}
-                      onMouseOut={(event) => event.target.pause()}
+                       
                       poster={`https://emerald-fancy-gerbil-824.mypinata.cloud/ipfs/${nft.ImgHash}-thumbnail.jpg`}
                     >
                       <source

@@ -8,7 +8,7 @@ const {REACT_APP_PINATA_API_KEY,REACT_APP_PINATA_API_SECRET} = process.env;
 
 export const storeHashOnBlockchain = async (videoId, updatedHash) => {
     try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
       
       const contract = new ethers.Contract(contractAddress,contractAbi.abi,signer);

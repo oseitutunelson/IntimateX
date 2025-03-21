@@ -61,10 +61,10 @@ export default function Navigation() {
     const handleReward = async (userAddress) =>{
       if(!isConnected) throw Error('User disconnected');
       try{
-        const ethersProvider = new ethers.providers.Web3Provider(window.ethereum);
+        const ethersProvider = new ethers.BrowserProvider(window.ethereum);
         const relayer = new ethers.Wallet(relayerPrivateKey,ethersProvider);
         const rewardContract = new Contract(contractAddress,rewardAbi.abi,relayer);
-        const gasPrice = ethers.utils.parseUnits('65','gwei').toString();
+        const gasPrice = ethers.parseUnits('65','gwei').toString();
         console.log(gasPrice)
         const tx = await rewardContract.rewardUser(userAddress,{
           gasPrice : gasPrice
@@ -81,7 +81,7 @@ export default function Navigation() {
         if(!isConnected){
             console.log('Wallet not connected');
         }
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const provider = new ethers.BrowserProvider(window.ethereum);
         const relayer = new ethers.Wallet(relayerPrivateKey,provider);
         const contract = new ethers.Contract(contractAddress, rewardAbi.abi, relayer);
 
@@ -107,13 +107,13 @@ export default function Navigation() {
               return; // Stop execution if no wallet is connected
           }
 
-          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          const provider = new ethers.BrowserProvider(window.ethereum);
           const signer = provider.getSigner();
           const contract = new ethers.Contract(contractAddress, rewardAbi.abi, signer);
           
           // Call balanceOf to get the user's reward balance
           const balance = await contract.balanceOf(address);
-          const formattedBalance = ethers.utils.formatEther(balance,18); // Assuming token has 18 decimals
+          const formattedBalance = ethers.formatEther(balance,18); // Assuming token has 18 decimals
           console.log("User's reward balance:", formattedBalance);
           setRewardBalance(formattedBalance);
           const creator = await getCreator(address);
@@ -130,7 +130,7 @@ export default function Navigation() {
         console.log("No wallet connected");
         return; // Stop execution if no wallet is connected
     }
-       const provider = new ethers.providers.Web3Provider(window.ethereum);
+       const provider = new ethers.BrowserProvider(window.ethereum);
        const signer = await provider.getSigner();
        const contractAddress = "0x759C52837dD5EF03C32a0A733f593DcC74dfab6c"
        const contract = new ethers.Contract(contractAddress,contractAbi.abi,signer);

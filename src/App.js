@@ -23,14 +23,14 @@ export default function App(){
       {
         console.log('No wallet detected');
       }
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
       const contractAddress = "0xb25C625657B05BD4d5230765d59811AEFf103D87";
       const contract = new ethers.Contract(contractAddress,contractAbi.abi,signer);
 
       const earnings = await contract.getCreatorEarnings(await signer.getAddress());
       console.log(await signer.getAddress())
-      const formattedEarnings = ethers.utils.formatEther(earnings)
+      const formattedEarnings = ethers.formatEther(earnings)
       setCreatorEarnings(formattedEarnings); // Update state with formatted earnings
       console.log(formattedEarnings);
       return earnings;

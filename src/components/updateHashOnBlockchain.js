@@ -14,7 +14,7 @@ export const updateHashOnBlockchain = async (userNftHash) => {
        await window.ethereum.request({ method: "eth_requestAccounts" });
       
    // Set up the provider and signer
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
       const contract = new ethers.Contract(contractAddress,contractAbi.abi,signer);
 
@@ -28,7 +28,7 @@ export const updateHashOnBlockchain = async (userNftHash) => {
 
 export const fetchHashFromBlockchain = async (userAddress) =>{
     try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const provider = new ethers.BrowserProvider(window.ethereum);
         const signer = await provider.getSigner();
         const contract = new ethers.Contract(contractAddress, contractAbi.abi, provider);
     
@@ -46,7 +46,7 @@ export const fetchGlobalNftHash = async () =>{
     return null;
 }
 
-       const provider = new ethers.providers.Web3Provider(window.ethereum);
+       const provider = new ethers.BrowserProvider(window.ethereum);
        const contract = new ethers.Contract(contractAddress, contractAbi.abi, provider);
 
     try {
